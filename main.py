@@ -20,3 +20,5 @@ matBrasileirao = list(wsBrasileirao)    #para trabalharmos com matrizes ao invé
 listaDados = []
 
 fun.colocaTupla(matBrasileirao, listaDados)
+
+print(listaDados[0])
