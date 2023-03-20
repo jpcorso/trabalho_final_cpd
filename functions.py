@@ -1,9 +1,16 @@
-
 def colocaTupla(matBrasileirao, listaDados):
+    subtitulo = ["id"]
+    qtdeSubtitulos = 36
+    
+    for i in range (qtdeSubtitulos):
+        subtitulo.append(matBrasileirao[0][i+1].value)
+    
     for j in range(1, len(matBrasileirao)): #percorre a coluna, começamos do 1 porque não queremos a primeira linha
         linha = []  #armazena uma linha, que será posteriormente um elemento da nossa lista, criando uma tupla
-        for i in range(len(matBrasileirao[j])): #percorre a linha dentro de um elemento j da coluna
-            linha.append(matBrasileirao[j][i].value)    #coloca cada elemento que tem na linha em uma lista
-        listaDados.append(tuple(linha)) #coloca todos os elementos da linha em uma posicao do nosso array final
-        
-    print(listaDados)
+        jogo = {}
+        for k in range(qtdeSubtitulos):
+            jogo[subtitulo[k]] = matBrasileirao[j][k].value # Adding new key-value pair
+
+        linha.append(jogo)
+        listaDados.append(jogo)
+        ##print(jogo)
