@@ -29,6 +29,6 @@ for partida in partidas:
         id_times += 1
 
 with open("times.bin", "wb") as arquivo:
-    pickle.dump(times,arquivo)
+    pickle.dump(times, arquivo)
         
 print(times)
