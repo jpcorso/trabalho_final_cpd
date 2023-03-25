@@ -39,7 +39,7 @@ for partida in partidas:
         locais.append({"id":0, "estadio": partida["estadio"], "publico_max": partida["publico_max"]})
         id_local+=1
 
-with open("locais.pkl", "wb") as arquivo:
+with open("locais.bin", "wb") as arquivo:
     pickle.dump(locais,arquivo)
 
 print(locais)

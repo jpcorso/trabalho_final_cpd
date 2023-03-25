@@ -29,7 +29,7 @@ for partida in partidas:
         arbitros.append({"id": 0, "nome": partida["arbitro"]})
         id_local+=1
 
-with open("arbitros.pkl", "wb") as arquivo:
+with open("arbitros.bin", "wb") as arquivo:
     pickle.dump(arbitros,arquivo)
 
 print(arbitros)
