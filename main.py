@@ -1,10 +1,11 @@
 #Trabalho final da disciplina de Classificação e Pesquisa de Dados
 #*****************************************************************
 #João Pedro Licks Corso - 00337569********************************
-#Arthur Ferreira Ely - 00XXXXXX***********************************
+#Arthur Ferreira Ely - 00338434***********************************
 
 import functions as fun    #importa arquivo com todas as funções necessarias
 import openpyxl
+import json
 import pandas as pd
 
 brasileirao = 'brasileiraoSerieA.xlsx'
