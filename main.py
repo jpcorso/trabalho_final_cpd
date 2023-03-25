@@ -28,8 +28,9 @@ listaDados = []
 fun.colocaTupla(matBrasileirao, listaDados)
 
 #chama escrita de arquivos
-arbitros
-locais
+
+#arbitros
+#locais
 
 
 
