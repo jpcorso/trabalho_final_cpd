@@ -4,6 +4,12 @@
 #Arthur Ferreira Ely - 00338434***********************************
 
 import functions as fun    #importa arquivo com todas as funções necessarias
+
+#importa arquivos py que criam os arquivos binarios
+import getArbitrosFromRawData as arbitros
+import getLocaisFromRawData as locais
+
+
 import openpyxl
 import json
 import pandas as pd
@@ -20,3 +26,12 @@ matBrasileirao = list(wsBrasileirao)    #para trabalharmos com matrizes ao invé
 listaDados = []
 
 fun.colocaTupla(matBrasileirao, listaDados)
+
+#chama escrita de arquivos
+
+#arbitros
+#locais
+
+
+
+print(listaDados[0])
