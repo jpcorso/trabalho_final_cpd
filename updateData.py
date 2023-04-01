@@ -1,16 +1,7 @@
-import functions as fun    #importa arquivo com todas as funções necessarias
-import openpyxl
+import scripts.functions as fun    #importa arquivo com todas as funções necessarias
 import pickle
-brasileirao = 'brasileiraoSerieA.xlsx'
 
-wbBrasileirao = openpyxl.load_workbook(brasileirao) #coloca a variavel em workbook (arquivo é como se fosse um livro)
-wsBrasileirao = wbBrasileirao['Sheet1'] #como se estivesse escolhendo a página de um livro, no caso uma aba do excel
-matBrasileirao = list(wsBrasileirao)    #para trabalharmos com matrizes ao invés de 'celulas'
-
-partidas = []
-
-fun.colocaTupla(matBrasileirao, partidas)
-
+partidas = fun.getPartidas();
 
 arbitros = []
 with open("arbitros.bin", "rb") as arquivo:
@@ -64,7 +55,16 @@ for partida in partidas:
             partida["time_man"] = time["id"]
             break
 
+indices = []; ##aqui entraria a árvore e salvaríamos aqui os indices
 with open("partidas.bin", "wb") as arquivo:
-    pickle.dump(partidas,arquivo)
+    i=0;
+    for partida in partidas:
+        indices.append({"indice":arquivo.tell()})
+        pickle.dump(partida ,arquivo)
+        i+=1
 
-print(partidas)
+with open("indices_partidas.bin", "wb") as arquivo:
+    pickle.dump(indices,arquivo)
+
+with open("indices_partidas.bin", "rb") as arquivo:
+    teste = pickle.load(arquivo)

@@ -1,40 +1,66 @@
-import functions as fun    #importa arquivo com todas as funções necessarias
-import openpyxl
 import pickle
-import struct
-brasileirao = 'brasileiraoSerieA.xlsx'
 
-wbBrasileirao = openpyxl.load_workbook(brasileirao) #coloca a variavel em workbook (arquivo é como se fosse um livro)
-wsBrasileirao = wbBrasileirao['Sheet1'] #como se estivesse escolhendo a página de um livro, no caso uma aba do excel
-matBrasileirao = list(wsBrasileirao)    #para trabalharmos com matrizes ao invés de 'celulas'
+#abre os arquivos binários com nossos dados
+partidas_f = open('./arquivos/partidas.bin', 'rb')
+times_f = open('./arquivos/times.bin', 'rb')
+arbitros_f = open('./arquivos/arbitros.bin', 'rb')
+locais_f = open('./arquivos/locais.bin', 'rb')
+tecnicos_f = open('./arquivos/tecnicos.bin', 'rb')
 
-partidas = []
+#abre os arquivos de indices de cada arquivo
+indices_partidas_f = open('./indices_arquivos/indices_partidas.bin', 'rb')
+indices_times_f = open('./indices_arquivos/indices_times.bin', 'rb')
+indices_arbitros_f = open('./indices_arquivos/indices_arbitros.bin', 'rb')
+indices_locais_f = open('./indices_arquivos/indices_locais.bin', 'rb')
+indices_tecnicos_f = open('./indices_arquivos/indices_tecnicos.bin', 'rb')
 
-fun.colocaTupla(matBrasileirao, partidas)
+indices_partida = pickle.load(indices_partidas_f)
+partidas_f.seek(indices_partida[7029]["indice"])
+partida = pickle.load(partidas_f)
 
-##id 7029
+indices_arbitros = pickle.load(indices_arbitros_f)
+arbitros_f.seek(indices_arbitros[partida["arbitro"]]["indice"])
+arbitro = pickle.load(arbitros_f)
 
-fopenqSEEK = 32
+partida["arbitro"] = arbitro["nome"]
 
-# abre o arquivo no modo de leitura binária
-with open('partidas.bin', 'rb') as f:
-    # carrega o conteúdo do arquivo para a memória
-    f.seek(7000)
+indices_locais = pickle.load(indices_locais_f)
+locais_f.seek(indices_locais[partida["estadio"]]["indice"])
+local = pickle.load(locais_f)
 
-    ##conteudo = pickle.load(f)
+partida["estadio"] = local["estadio"]
+partida["publico_max"] = local["publico_max"] 
 
-    linha = f.readline()
+############################################################
 
-    data_linha = struct.unpack('utf-8', linha)
+indices_times = pickle.load(indices_times_f)
+times_f.seek(indices_times[partida["time_man"]]["indice"])
+times = pickle.load(times_f)
+partida["time_man"] = times["nome"]
 
-    linha = linha.decode('utf-8')
-    print(linha)
-# Traceback (most recent call last):
-#   File "getPartida.py", line 25, in <module>
-#     linha = linha.decode('utf-8')
-# UnicodeDecodeError: 'utf-8' codec can't decode byte 0x94 in position 6: invalid start byte
+times_f.seek(indices_times[partida["time_vis"]]["indice"])
+times = pickle.load(times_f)
+partida["time_vis"] = times["nome"]
 
+indices_tecnicos = pickle.load(indices_tecnicos_f)
+tecnicos_f.seek(indices_tecnicos[partida["tecnico_man"]]["indice"])
+tecnicos = pickle.load(tecnicos_f)
+partida["tecnico_man"] = tecnicos["nome"]
 
-# percorre os elementos do conteúdo
-##for elemento in conteudo:
-##    print(elemento)
+tecnicos_f.seek(indices_tecnicos[partida["tecnico_vis"]]["indice"])
+tecnicos = pickle.load(tecnicos_f)
+partida["tecnico_vis"] = tecnicos["nome"]
+
+print(partida)
+
+#fecha os arquivos
+partidas_f.close()
+times_f.close()
+arbitros_f.close()
+locais_f.close()
+tecnicos_f.close()
+indices_partidas_f.close()
+indices_times_f.close()
+indices_arbitros_f.close()
+indices_locais_f.close()
+indices_tecnicos_f.close()
