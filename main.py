@@ -6,7 +6,7 @@
 import functions as fun    #importa arquivo com todas as funções necessarias
 
 #importa arquivos py que criam os arquivos binarios
-import getArbitrosFromRawData as arbitros
+import arbitros.getArbitrosFromRawData as arbitros
 import getLocaisFromRawData as locais
 
 
@@ -31,7 +31,5 @@ fun.colocaTupla(matBrasileirao, listaDados)
 
 #arbitros
 #locais
-
-
 
 print(listaDados[0])

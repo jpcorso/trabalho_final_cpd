@@ -1,4 +1,15 @@
-def colocaTupla(matBrasileirao, listaDados):
+import openpyxl
+
+def getPartidas():
+
+    brasileirao = 'brasileiraoSerieA.xlsx'
+
+    wbBrasileirao = openpyxl.load_workbook(brasileirao) #coloca a variavel em workbook (arquivo é como se fosse um livro)
+    wsBrasileirao = wbBrasileirao['Sheet1'] #como se estivesse escolhendo a página de um livro, no caso uma aba do excel
+    matBrasileirao = list(wsBrasileirao)    #para trabalharmos com matrizes ao invés de 'celulas'
+
+    partidas = []
+
     subtitulo = ["id"]
     qtdeSubtitulos = 36
     
@@ -12,5 +23,8 @@ def colocaTupla(matBrasileirao, listaDados):
             jogo[subtitulo[k]] = matBrasileirao[j][k].value # Adding new key-value pair
 
         linha.append(jogo)
-        listaDados.append(jogo)
+        partidas.append(jogo)
         ##print(jogo)
+
+    return partidas
+
