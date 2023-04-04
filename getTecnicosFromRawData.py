@@ -8,17 +8,26 @@ id_tecnicos = 0;
 partidas = fun.getPartidas()
 
 for partida in partidas:
-    ja_tem = False
+    ja_tem_man = False
+    ja_tem_vis = False
     for tecnico in tecnicos:
-
         if partida["tecnico_man"] == tecnico["nome"]:
-            ja_tem = True
+            ja_tem_man = True
 
-        if(ja_tem):
+        if partida["tecnico_vis"] == tecnico["nome"]:
+            ja_tem_vis = True
+
+        if(ja_tem_man and ja_tem_vis):
             break
-
-    if (not ja_tem):
+    
+    if (not ja_tem_man):
+        print("1")
         tecnicos.append({"id": id_tecnicos, "nome": partida["tecnico_man"]})
+        id_tecnicos += 1
+
+    if (not ja_tem_vis):
+        print("2")
+        tecnicos.append({"id": id_tecnicos, "nome": partida["tecnico_vis"]})
         id_tecnicos += 1
         
 print(tecnicos)
