@@ -65,5 +65,3 @@ def getPartida(id):
     indices_tecnicos_f.close()
 
     return partida
-
-print(getPartida(2112))

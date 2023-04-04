@@ -1,7 +1,6 @@
 import getPartida as fun
-import sys
-import math
-import datetime
+import pickle
+import time
 
 time_1 = input("Primeiro time: ");
 time_2 = input("Segundo time: ");
@@ -9,9 +8,10 @@ print("Escolha um período. Vão de 2003 até 2020.");
 ano_inicio = input("Início: ");
 ano_fim= input("Fim: ");
 
+inicio = time.time()
 # print(time_1 + ", "+ time_2);
-temPartidas = True;
-partidas_times = [];
+temPartidas = True
+partidas_times = []
 vitorias_1 = 0
 vitorias_2 = 0
 empates = 0
@@ -20,10 +20,19 @@ maior_goleada = {"id": 0, "diff": 0,"gols_man": 0, "gols_vis": 0}
 maior_publico_1 = {"id": 0, "publico": 0}
 maior_publico_2 = {"id": 0, "publico": 0}
 jogo_mais_falta = {"id": 0, "faltas": 0} ## fazer depois
+indices_time1 = None;
+
+with open("./indices_arquivos/indices_times_invertidos.bin", "rb") as arquivo:
+    indices_time1 = pickle.load(arquivo)
+
+times_invertidos = open("./arquivos_invertidos/times_invertidos.bin", "rb")
+
 i=0
-while temPartidas:
-    try:
-        partida = fun.getPartida(i);
+try:
+    times_invertidos.seek(indices_time1[time_1])
+    ids_time_1 = pickle.load(times_invertidos)["ids"]
+    for i in range(len(ids_time_1)):
+        partida = fun.getPartida(ids_time_1[i]);
         i+=1
         if (partida["ano_campeonato"] >= int(ano_inicio)) and (partida["ano_campeonato"] <= int(ano_fim)):
             if (partida["time_man"] == time_1 and partida["time_vis"] == time_2):
@@ -91,14 +100,19 @@ while temPartidas:
                     maior_publico_2 = {"id": partida["id"], "publico": maior_publico}
         else:
             break
-    except IndexError as e:
+except IndexError as e:
         print("Fim das partidas.");
+        print(e);
         temPartidas = False;
-    except TypeError as e:
-        print("probleminha, ein ",i);
-        i+=1
+except TypeError as e:
+    print("probleminha, ein ",i);
+    i+=1
+fim = time.time()
+
+tempo_exec = fim - inicio;
 
 print("Analisando entre "+ano_inicio+" e "+ano_fim)
+print("Tempo empregado: ",tempo_exec,"s")
 print("Vitórias do " + time_1 + ": ",vitorias_1)
 print("Vitórias do "+ time_2 + ":",vitorias_2)
 print("Empates: ",empates)
