@@ -318,6 +318,8 @@ def vitoriasDerrotas():
     #print(vitoriasTupla)
     #print(derrotasTupla)
 
+def printaPartida (partida):
+    return print(partida)
 
 vitoriasDerrotas()
 maiorMediaIdade()
