@@ -15,7 +15,7 @@ indices_locais_f = open('./indices_arquivos/indices_locais.bin', 'rb')
 indices_tecnicos_f = open('./indices_arquivos/indices_tecnicos.bin', 'rb')
 
 indices_partida = pickle.load(indices_partidas_f)
-partidas_f.seek(indices_partida[7029]["indice"])
+partidas_f.seek(indices_partida[2000]["indice"])
 partida = pickle.load(partidas_f)
 
 indices_arbitros = pickle.load(indices_arbitros_f)
