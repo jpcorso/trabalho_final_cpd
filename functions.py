@@ -74,10 +74,10 @@ def maisGols():
     golsOrdenados = sorted(golsAndIndices, reverse=True)
 
     # Pegar os 10 primeiros elementos da lista ordenada (ou seja, os 10 maiores valores) e suas posições correspondentes
-    top10 = golsOrdenados[:10]
+    #top10 = golsOrdenados[:10]
 
     # Imprimir os 10 maiores valores e suas posições
-    for valor, posicao in top10:
+    for valor, posicao in golsOrdenados:
         times_f.seek(indices_times[posicao]["indice"])
         time = pickle.load(times_f)
         #print(f"Gols: {valor}, Time: {time['nome']}")
@@ -198,10 +198,10 @@ def maiorMediaIdade():
     idadeManSorted = sorted(IdadeManAndIndices, reverse=True)
     idadeVisSorted = sorted(IdadeVisAndIndices, reverse=True)
 
-    top10Man = idadeManSorted[:10]
-    top10Vis = idadeVisSorted[:10]
+    top30Man = idadeManSorted[:50]
+    top30Vis = idadeVisSorted[:50]
 
-    top20 = top10Man + top10Vis
+    top20 = top30Man + top30Vis
 
     top20Sorted = sorted(top20, reverse=True)
 
@@ -234,7 +234,7 @@ def maiorMediaIdade():
     with open("./rankings/media_idade.bin", "wb") as arquivo:
         pickle.dump(idadeTupla,arquivo)
 
-    #print(idadeTupla)
+    print(idadeTupla)
 
     #print(top20Sorted)
 
@@ -285,16 +285,16 @@ def vitoriasDerrotas():
     # Classificar a lista de tuplas com base nos valores (ordenados em ordem decrescente)
     vitOrdenadas = sorted(vitAndIndices, reverse=True)
     # Pegar os 10 primeiros elementos da lista ordenada (ou seja, os 10 maiores valores) e suas posições correspondentes
-    top10Vit = vitOrdenadas[:10]
+    #top10Vit = vitOrdenadas[:10]
 
     derAndIndices = [(valor, indice) for indice, valor in enumerate(derrotas)]
     derOrdenadas = sorted(derAndIndices, reverse=True)
-    top10Der = derOrdenadas[:10]
+    #top10Der = derOrdenadas[:10]
 
     vitoriasTupla = []
     derrotasTupla = []
     # Imprimir os 10 maiores valores e suas posições
-    for valor, posicao in top10Vit:
+    for valor, posicao in vitOrdenadas:
         times_f.seek(indices_times[posicao]["indice"])
         time = pickle.load(times_f)
         #print(f"Vitórias: {valor}, Time: {time['nome']}")
@@ -302,7 +302,7 @@ def vitoriasDerrotas():
         nova_tupla_vit = (time['nome'], valor)
         vitoriasTupla.append(nova_tupla_vit)  
 
-    for valor, posicao in top10Der:
+    for valor, posicao in derOrdenadas:
         times_f.seek(indices_times[posicao]["indice"])
         time = pickle.load(times_f)
 

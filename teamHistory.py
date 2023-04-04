@@ -97,8 +97,6 @@ try:
                         "gols_man": partida["gols_man"], 
                         "gols_vis": partida["gols_vis"], 
                     }
-        else:
-            break
 except IndexError as e:
         print("Fim das partidas.");
         print(e);
