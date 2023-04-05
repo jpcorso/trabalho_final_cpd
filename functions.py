@@ -156,7 +156,7 @@ def maiorPublico():
 
         #print(f"Publico: {valor}, Partida: {time_man['nome']} vs {time_vis['nome']}")
 
-def maiorMediaIdade():
+def mediaIdade():
 
     partidas_f = open('./arquivos/partidas.bin', 'rb')
     times_f = open('./arquivos/times.bin', 'rb')
@@ -170,12 +170,12 @@ def maiorMediaIdade():
 
     idade_media_man = []
     idade_media_vis = []
-    ano = []
+    data = []
 
     for i in range(len(indices_partida)):
         idade_media_man.append(0)
         idade_media_vis.append(0)
-        ano.append(0)
+        data.append(0)
 
         partidas_f.seek(indices_partida[i]["indice"])
         partida = pickle.load(partidas_f)
@@ -190,27 +190,42 @@ def maiorMediaIdade():
         else:
             idade_media_vis[i] = partida["idade_media_titular_vis"]
 
-        ano[i] = partida["ano_campeonato"]
+        data[i] = partida["data"]
 
     IdadeManAndIndices = [(valor, indice, "m") for indice, valor in enumerate(idade_media_man)]
     IdadeVisAndIndices = [(valor, indice, "v") for indice, valor in enumerate(idade_media_vis)]
 
+    #para pegar o rankings dos times mais velhos
     idadeManSorted = sorted(IdadeManAndIndices, reverse=True)
     idadeVisSorted = sorted(IdadeVisAndIndices, reverse=True)
 
-    top30Man = idadeManSorted[:50]
-    top30Vis = idadeVisSorted[:50]
+    topFinal = idadeManSorted + idadeVisSorted
+    topFinal50 = topFinal[:50]
+    topFinalSorted = sorted(topFinal50, reverse=True)
 
-    top20 = top30Man + top30Vis
 
-    top20Sorted = sorted(top20, reverse=True)
+    #para pegar o ranking de times mais novos
+    idadeManRevSorted = sorted(IdadeManAndIndices, reverse=False)
+    idadeVisRevSorted = sorted(IdadeVisAndIndices, reverse=False)
 
+    topFinalRev = idadeManRevSorted + idadeVisRevSorted
+    
+    topFinalRev = tuple([tupla for tupla in topFinalRev if tupla[0] != 0])
+
+    topFinalRev50 = topFinalRev[:50] 
+            
+    topFinalSortedRev = sorted(topFinalRev50, reverse=False)
+
+    #print(topFinalSortedRev)
+    
+    #print(topFinalRev)
     #top10 = top20[:10]
 
-    times_na_lista = set() # conjunto para armazenar os times que já apareceram na lista
+    ano_ja_ta = set() # conjunto para armazenar os times que já apareceram na lista
 
+    #coloca na tupla para maiores idades
     idadeTupla = []
-    for valor, posicao, flag in top20Sorted:
+    for valor, posicao, flag in topFinalSorted:
         partidas_f.seek(indices_partida[posicao]["indice"])
         partida = pickle.load(partidas_f)
 
@@ -222,21 +237,49 @@ def maiorMediaIdade():
             times_f.seek(indices_times[partida['time_vis']]["indice"])
             time = pickle.load(times_f)
 
-        if time['nome'] in times_na_lista: # verifica se o time já está na lista
+        if partida['ano_campeonato'] in ano_ja_ta: # verifica se o time já está na lista
             continue
 
-        nova_tupla_idade = (time['nome'], valor, ano[posicao])
+        nova_tupla_idade = (time['nome'], valor, data[posicao])
         idadeTupla.append(nova_tupla_idade)  
 
         #print(f"Idade Média: {valor}, Time: {time['nome']}, Ano:{ano[posicao]}")
-        times_na_lista.add(time['nome']) # adiciona o time ao conjunto
+        ano_ja_ta.add(partida['ano_campeonato']) # adiciona o time ao conjunto
 
-    with open("./rankings/media_idade.bin", "wb") as arquivo:
+    with open("./rankings/media_idade_maior.bin", "wb") as arquivo:
         pickle.dump(idadeTupla,arquivo)
 
-    print(idadeTupla)
+    #print(idadeTupla)
 
-    #print(top20Sorted)
+    #coloca na tupla para menores idades
+    idadeTuplaRev = []
+    ano_ja_ta_rev = set()
+
+    for valor, posicao, flag in topFinalSortedRev:
+        partidas_f.seek(indices_partida[posicao]["indice"])
+        partida = pickle.load(partidas_f)
+
+        if flag == "m":
+            times_f.seek(indices_times[partida['time_man']]["indice"])
+            time = pickle.load(times_f)
+
+        if flag == "v":
+            times_f.seek(indices_times[partida['time_vis']]["indice"])
+            time = pickle.load(times_f)
+
+        if partida['ano_campeonato'] in ano_ja_ta_rev: # verifica se o time já está na lista
+            continue
+
+        nova_tupla_idade_rev = (time['nome'], valor, data[posicao])
+        idadeTuplaRev.append(nova_tupla_idade_rev)  
+
+        #print(f"Idade Média: {valor}, Time: {time['nome']}, Ano:{ano[posicao]}")
+        ano_ja_ta_rev.add(partida['ano_campeonato']) # adiciona o time ao conjunto
+
+    with open("./rankings/media_idade_menor.bin", "wb") as arquivo:
+        pickle.dump(idadeTuplaRev,arquivo)
+
+    #print(idadeTuplaRev)
 
 def vitoriasDerrotas():
 
@@ -318,8 +361,128 @@ def vitoriasDerrotas():
     #print(vitoriasTupla)
     #print(derrotasTupla)
 
+def precoTimes():
+     
+    partidas_f = open('./arquivos/partidas.bin', 'rb')
+    times_f = open('./arquivos/times.bin', 'rb')
 
-vitoriasDerrotas()
-maiorMediaIdade()
-maisGols()
-maiorPublico()
+    #abre os arquivos de indices de cada arquivo
+    indices_times_f = open('./indices_arquivos/indices_times.bin', 'rb')
+    indices_partidas_f = open('./indices_arquivos/indices_partidas.bin', 'rb')
+
+    indices_times = pickle.load(indices_times_f)
+    indices_partida = pickle.load(indices_partidas_f)
+
+    precosMan = []
+    precosVis = []
+    ano = []
+    for i in range(len(indices_partida)):
+        partidas_f.seek(indices_partida[i]["indice"])
+        partida = pickle.load(partidas_f)
+        precosMan.append(0)
+        precosVis.append(0)
+        ano.append(0)
+        for j in range(len(indices_times)):
+            times_f.seek(indices_times[j]["indice"])
+            time = (pickle.load(times_f))
+
+            if partida["time_man"] == time["id"]:
+                if partida["valor_equipe_titular_man"] is None:
+                    partida["valor_equipe_titular_man"] = 0
+                else:
+                    precosMan[i] = partida["valor_equipe_titular_man"]
+
+            if partida["time_vis"] == time["id"]:
+                if partida["valor_equipe_titular_vis"] is None:
+                    partida["valor_equipe_titular_vis"] = 0
+                else:
+                    precosVis[i] = partida["valor_equipe_titular_vis"]
+
+            ano[i] = partida["ano_campeonato"]
+
+    valorManAndIndices = [(valor, indice, "m") for indice, valor in enumerate(precosMan)]
+    valorVisAndIndices = [(valor, indice, "v") for indice, valor in enumerate(precosVis)]
+
+    valorManSorted = sorted(valorManAndIndices, reverse=True)
+    valorVisSorted = sorted(valorVisAndIndices, reverse=True)
+
+    topFinal = valorManSorted + valorVisSorted
+    topFinal300 = topFinal[:300]
+    topFinalSorted = sorted(topFinal300, reverse=True)
+
+    #para pegar o ranking de times mais baratos
+    valorManRevAndIndices = sorted(valorManAndIndices, reverse=False)
+    valorVisRevAndIndices = sorted(valorVisAndIndices, reverse=False)
+
+    finalRevPreco = valorManRevAndIndices + valorVisRevAndIndices
+    
+    finalRevPreco = tuple([tupla for tupla in finalRevPreco if tupla[0] != 0])
+
+    finalRevPreco300 = finalRevPreco[:300] 
+            
+    topFinalSortedRev = sorted(finalRevPreco300, reverse=False)
+
+    maisCarosTupla = []
+    ano_ja_foi = set()
+
+    for valor, posicao, flag in topFinalSorted:
+        partidas_f.seek(indices_partida[posicao]["indice"])
+        partida = pickle.load(partidas_f)
+
+        if flag == "m":
+            times_f.seek(indices_times[partida['time_man']]["indice"])
+            time = pickle.load(times_f)
+
+        if flag == "v":
+            times_f.seek(indices_times[partida['time_vis']]["indice"])
+            time = pickle.load(times_f)
+
+        if partida['ano_campeonato'] in ano_ja_foi: # verifica se o time já está na lista
+            continue
+
+        nova_tupla_preco = (time['nome'], valor, ano[posicao])
+        maisCarosTupla.append(nova_tupla_preco)  
+
+        #print(f"Idade Média: {valor}, Time: {time['nome']}, Ano:{ano[posicao]}")
+        ano_ja_foi.add(partida['ano_campeonato']) # adiciona o time ao conjunto
+
+    with open("./rankings/mais_caros.bin", "wb") as arquivo:
+        pickle.dump(maisCarosTupla,arquivo)
+
+    maisBaratosTupla = []
+    ano_ja_ta_rev = set()
+
+    for valor, posicao, flag in topFinalSortedRev:
+        partidas_f.seek(indices_partida[posicao]["indice"])
+        partida = pickle.load(partidas_f)
+
+        if flag == "m":
+            times_f.seek(indices_times[partida['time_man']]["indice"])
+            time = pickle.load(times_f)
+
+        if flag == "v":
+            times_f.seek(indices_times[partida['time_vis']]["indice"])
+            time = pickle.load(times_f)
+
+        if partida['ano_campeonato'] in ano_ja_ta_rev: # verifica se o time já está na lista
+            continue
+
+        nova_tupla_idade_rev = (time['nome'], valor, ano[posicao])
+        maisBaratosTupla.append(nova_tupla_idade_rev)  
+
+        #print(f"Idade Média: {valor}, Time: {time['nome']}, Ano:{ano[posicao]}")
+        ano_ja_ta_rev.add(partida['ano_campeonato']) # adiciona o time ao conjunto
+
+    with open("./rankings/mais_baratos.bin", "wb") as arquivo:
+        pickle.dump(maisBaratosTupla,arquivo)
+
+    #print(precosVis)
+    #print(maisCarosTupla)
+    #print(maisBaratosTupla)
+    #print(ano)
+
+precoTimes()
+#vitoriasDerrotas()
+mediaIdade()
+#maisGols()
+#maiorPublico()
