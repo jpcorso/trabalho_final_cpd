@@ -159,14 +159,51 @@ print("------"+partida_publico["time_man"]+" x "+partida_publico["time_vis"])
 print("------Data: " + partida_publico["data"].strftime('%d/%m/%Y'))
 print("------Estádio: " + partida_publico["estadio"]+"")
 print("------Publico: " + str(partida_publico["publico"]))
+
 def printaPartida(partida):
+    dictionary = {
+        "horario" : "Horário do jogo:",
+        "ano_campeonato" : "BRASILEIRÃO",
+        "rodada" : "Rodada:",
+        "estadio" : "Estádio:",
+        "arbitro" : "Árbitro:",
+        "publico" : "Público:",
+        "publico_max" : "Público máximo:",
+        "time_man" : "Time mandante:",
+        "time_vis" : "Time visitante:",
+        "tecnico_man" : "Técnico mandante:",
+        "tecnico_vis" : "Técnico visitante:",
+        "colocacao_man" : "Colocação (MANDANTE):",
+        "colocacao_vis" : "Colocação (VISITANTE):",
+        "valor_equipe_titular_man": "Valor do time titular (MANDANTE): R$",
+        "valor_equipe_titular_vis": "Valor do time titular (VISITANTE): R$",
+        "idade_media_titular_man": "Idade média do time titular (MANDANTE):",
+        "idade_media_titular_vis": "Idade média do time titular (VISITANTE):",
+        "gols_man": "Gols (MANDANTE):",
+        "gols_vis": "Gols (VISITANTE):",
+        "gols_1_tempo_man": "Gols do mandante (1° tempo):",
+        "gols_1_tempo_vis": "Gols do visitante (1° tempo):",
+        "escanteios_man": "Escanteios (MANDANTE):",
+        "escanteios_vis": "Escanteios (VISITANTE):",    
+        "faltas_man": "Faltas (MANDANTE):",
+        "faltas_vis": "Faltas (VISITANTE):",       
+        "chutes_bola_parada_man": "Chutes bola parada (MANDANTE):",
+        "chutes_bola_parada_vis": "Chutes bola parada (VISITANTE):",  
+        "defesas_man": "Defesas (MANDANTE):",
+        "defesas_vis": "Defesas (VISITANTE):",    
+        "impedimentos_man": "Impedimentos (MANDANTE):",
+        "impedimentos_vis": "Impedimentos (VISITANTE):",   
+        "chutes_man": "Chutes (MANDANTE):",
+        "chutes_vis": "Chutes (VISITANTE):", 
+        "chutes_fora_man": "Chutes fora do gol (MANDANTE):",
+        "chutes_fora_vis": "Chutes fora do gol (Visitante):",  
+    }
     for key in partida.keys():
         if (key == "data"):
-            print(key+": "+ partida[key].strftime('%d/%m/%Y')+"")
+            print("Data do jogo: "+ partida[key].strftime('%d/%m/%Y')+"")
         elif (partida[key] != None and key != "id"):
-            print(key+": "+str(partida[key])+"")
+            print(dictionary[key]+" "+str(partida[key])+"")
         
-
 print("Deseja ver mais partidas do "+time_1+"?");
 option = input("S/N: ")
 j=0
