@@ -65,6 +65,8 @@ def indice_do_time(time,indices_times):
 
 def history():
 
+    sg.theme('DarkGrey14')
+
     layout = [
         [sg.Text('Time 1: '), sg.Input(key='time1')],
         [sg.Text('Time 2: '), sg.Input(key='time2')],

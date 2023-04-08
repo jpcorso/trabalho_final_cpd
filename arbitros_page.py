@@ -3,7 +3,7 @@ import getPartida as fun
 import PySimpleGUI as sg
 
 def arbitros():
-    sg.theme('DarkGrey14')
+    sg.theme('')
 
     layout = [
         [sg.Text('Pesquise um árbitro:', font=('Helvetica', 14), size=(15,1)),

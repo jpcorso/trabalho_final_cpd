@@ -1,6 +1,9 @@
 import getPartida as fun
 import pickle
 import time
+import PySimpleGUI as sg
+import contextlib
+import io
 
 def printaPartida(partida):
     dictionary = {
@@ -63,6 +66,33 @@ def indice_do_time(time,indices_times):
         return timeExiste[1]
 
 def history():
+    sg.theme('DarkGrey14')
+
+    layout = [
+        [sg.Text('Time: '), sg.InputText(key='time')],
+        [sg.Text('Ano Início: '), sg.InputText(key='ano_inicio')],
+        [sg.Text('Ano Fim: '), sg.InputText(key='ano_fim')],
+        [sg.Button('Buscar')],
+        [sg.Text('Resultado:')],
+        [sg.Output(size=(60, 20))]
+    ]
+
+    window = sg.Window('Histórico de um Time', layout)
+
+    while True:
+        event, values = window.read()
+
+        if event == sg.WIN_CLOSED:
+            window.close()
+            break
+
+        if event == 'Buscar':
+            time_1 = values['time']
+            ano_inicio = values['ano_inicio']
+            ano_fim = values['ano_fim']
+            window['-OUTPUT-'].update("")
+
+
     doFunction = "S"
     while doFunction.upper() == "S":
         print("Histórico de um time!");
@@ -283,3 +313,4 @@ def history():
         print("Deseja escolher outro time para analisar?")
         doFunction = input("S/N: ")
 
+history()
