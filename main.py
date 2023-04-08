@@ -1,52 +1,36 @@
-#Trabalho final da disciplina de Classificação e Pesquisa de Dados
-#*****************************************************************
-#João Pedro Licks Corso - 00337569********************************
-#Arthur Ferreira Ely - 00338434***********************************
-
-import functions as fun    #importa arquivo com todas as funções necessarias
-import getPartida as getPart
 import teamHistory as TH
 import rankings as RK
 import arbitros_page as ARB
-#importa arquivos py que criam os arquivos binarios
-import pandas as pd
+import confrontos as CONF
+import PySimpleGUI as sg
 
-def opcao_um():
-    TH.teamHistory()
+#Define as configurações da janela
+sg.theme('DarkGrey14')
+layout = [
+    [sg.Text('futeTUDO - Saiba tudo sobre o mundo da bola', font=('Helvetica', 20), justification='center')],
+    [sg.Text('Escolha uma das opções abaixo:', font=('Helvetica', 16), justification='center')],
+    [sg.Button('Históricos', size=(15, 2)), sg.Button('Confrontos', size=(15, 2)), sg.Button('Árbitros', size=(15, 2)), sg.Button('Rankings', size=(15, 2))],
+    [sg.Text('', size=(40, 10))] # Adiciona um espaço em branco abaixo das opções
+]
 
-def opcao_dois():
-    print("Opção 2 selecionada.")
-
-def opcao_tres():
-    ARB.arbitros()
-
-def opcao_quatro():
-    RK.rankings()
-
+# Cria a janela
+window = sg.Window('futeTUDO', layout, size=(800, 600))
 
 while True:
-    # SWITCH
-    print("futeTUDO - Saiba tudo sobre o mundo da bola")
-    print("-------------------------------------------")
-    print("o que você deseja saber?")
-    print("1 - Históricos")
-    print("2 - Confrontos")
-    print("3 - Árbitros")
-    print("4 - Rankings")
-    print("5 - Sair")
-    opcao = input("Digite o número da opção desejada (1, 2, 3 ou 4): ")
+    # Lê os eventos da janela
+    event, values = window.read()
 
     # Executa a opção selecionada pelo usuário
-    if opcao == "1":
-        opcao_um()
-    elif opcao == "2":
-        opcao_dois()
-    elif opcao == "3":
-        opcao_tres()
-    elif opcao == "4":
-        opcao_quatro()
-    elif opcao == "5":
-        print("Encerrando programa...")
+    if event == sg.WIN_CLOSED:
         break
-    else:
-        print("Opção inválida. Digite apenas 1, 2, 3 ou 4.")
+    elif event == 'Históricos':
+        TH.teamHistory()
+    elif event == 'Confrontos':
+        CONF.history()
+    elif event == 'Árbitros':
+        ARB.arbitros()
+    elif event == 'Rankings':
+        RK.exibir_rankings()
+
+# Fecha a janela
+window.close()
