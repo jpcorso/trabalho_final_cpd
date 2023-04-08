@@ -186,7 +186,6 @@ def indice_do_time(time,indices_times):
                 print("Talvez você queira pesquisar:")
                 for sugestao in sugestoes:
                     print(sugestao[0])
-                print("Digite exatamente como está listado para analisar seu time.")
                 break;
         return False;
     else:
@@ -230,6 +229,11 @@ def history():
 
         inicio = time.time()
 
+        with open('./indices_arquivos/indices_ano_campeonatos.bin', 'rb') as f:
+            indices_campeonatos = pickle.load(f)
+
+        indice_inicio = indices_campeonatos[ano_inicio][0]
+        indice_fim = indices_campeonatos[ano_fim][1]
         temPartidas = True
         vitorias_1 = 0
         empates = 0
@@ -241,7 +245,6 @@ def history():
         maior_publico_1 = {"id": 0, "publico": 0}
 
         i=0
-        indice_final_loop=0
 
         try:
             with open("./arquivos_invertidos/times_invertidos.bin", "rb") as times_invertidos:
@@ -249,9 +252,14 @@ def history():
                 registro = pickle.load(times_invertidos)
             ids_time_1 = registro["ids"]
             nome_time = registro["nome"]
+
+            indices_partidas = []            
+            for i in ids_time_1:
+                if i >= indice_inicio and i <= indice_fim:
+                    indices_partidas.append(i)
             primeiraPartida = False
-            for i in range(len(ids_time_1)):
-                partida = fun.getPartida(ids_time_1[i]);
+            for i in range(len(indices_partidas)):
+                partida = fun.getPartida(indices_partidas[i]);
                 if (partida["ano_campeonato"] >= int(ano_inicio)) and (partida["ano_campeonato"] <= int(ano_fim)):
                     if (primeiraPartida == False):
                         indice_inicial_arq = i
@@ -311,11 +319,9 @@ def history():
                         
                     if (partida["ano_campeonato"] == 2020 and partida["rodada"] == 38):
                         print("Fim das partidas.");
-                        indice_final_loop = i;
                         break;  
                 elif(partida["ano_campeonato"] > int(ano_fim)): 
                     print("Fim das partidas.");
-                    indice_final_loop = i-1;
                     break;
                 i+=1
         except IndexError as e:
@@ -361,54 +367,33 @@ def history():
         print(f"Deseja ver as partidas de {nome_time} no periodo?")
         option = input("S/N: ")
         if (option.upper() == "S"):
-            qtde_partidas = input("Quantas partidas deseja ver por vez? ")
+            qtde_partidas = int(input("Quantas partidas deseja ver por vez? "))
             modo = input("Da ultima partida até a primeira (D) ou da primeira partida até a ultima (C)? ")
-            i=indice_inicial_arq
+            j=0;
             while option.upper() == "S" and temPartidas:
-                temPartidas = True;
-                indice_inicial_loop=i
-                if modo.upper() == "C":
-                    while temPartidas and (i <= (int(qtde_partidas)-1+indice_inicial_loop)):
-                        if i <= (len(ids_time_1)-1):
-                            partida = fun.getPartida(ids_time_1[i])
-                            if (partida["ano_campeonato"] >= int(ano_inicio)) and (partida["ano_campeonato"] <= int(ano_fim)):
-                                printaPartida(partida)
-                                print("_________________________________")
-                            elif (partida["ano_campeonato"] > int(ano_fim)):
-                                print("Sem mais partidas")
-                                temPartidas = False
-                                break;
-                            i+=1
-                        else:
-                            print("Sem mais partidas")
-                            temPartidas = False
-                            break;
-                elif modo.upper() == "D":
-                    i = indice_final_loop;
-                    while temPartidas and (i > (indice_final_loop-int(qtde_partidas))):
-                        if i >= 0:
-                            partida = fun.getPartida(ids_time_1[i])
-                            if (partida["ano_campeonato"] >= int(ano_inicio)) and (partida["ano_campeonato"] <= int(ano_fim)):
-                                printaPartida(partida)
-                                print("_________________________________")
-                            elif (partida["ano_campeonato"] < int(ano_inicio)):
-                                print("Sem mais partidas")
-                                temPartidas = False
-                                break;
-                            i-=1
-                        else:
-                            print("Sem mais partidas")
-                            temPartidas = False
+                if modo.upper() == "C" or modo.upper() == "D":
+                    if modo.upper() == "D":
+                        indices_partidas = sorted(indices_partidas, reverse=True)
+
+                    for i in range(qtde_partidas):
+                        if ((i+j) < len(indices_partidas)):
+                            partida = fun.getPartida(indices_partidas[i+j])
+                            printaPartida(partida)
+                            print("------------------")
+                        else: 
+                            temPartidas = False;
                             break;
                 else:
                     print("Saindo da função...")
                     break;
+                
                 if (temPartidas):
                     print("Deseja continuar?")
                     option = input("S/N: ")
                     if option.upper() == "S" : 
-                        indice_inicial_loop = i;
-                        indice_final_loop = i;
+                        j+=qtde_partidas
+                else:
+                    print("Fim das partidas.")
         
         print("Deseja escolher outro time para analisar?")
         doFunction = input("S/N: ")

@@ -106,6 +106,12 @@ def history():
 
         inicio = time.time()
 
+        with open('./indices_arquivos/indices_ano_campeonatos.bin', 'rb') as f:
+            indices_campeonatos = pickle.load(f)
+
+        indice_inicio = indices_campeonatos[ano_inicio][0]
+        indice_fim = indices_campeonatos[ano_fim][1]
+
         temPartidas = True
         vitorias_1 = 0
         vitorias_2 = 0
@@ -130,9 +136,13 @@ def history():
             nome_time_1 = registro_1["nome"]
             nome_time_2 = registro_2["nome"]
 
-            indices_partidas = [value for value in ids_time_1 if value in ids_time_2] ;
-            for i in range(len(indices_partidas)):
-                partida = fun.getPartida(indices_partidas[i]);
+            indices_partidas = [value for value in ids_time_1 if value in ids_time_2]; 
+            indices_partidas_final = [];
+            for i in indices_partidas:
+                if i >= indice_inicio and i <= indice_fim:
+                    indices_partidas_final.append(i)
+            for i in range(len(indices_partidas_final)):
+                partida = fun.getPartida(indices_partidas_final[i]);
                 if (partida["ano_campeonato"] >= int(ano_inicio)) and (partida["ano_campeonato"] <= int(ano_fim)):
                     if (partida["time_man"].title() == time_1.title()):
                         if(partida["gols_man"] > partida["gols_vis"]):
@@ -243,15 +253,15 @@ def history():
         if (option.upper() == "S"):
             qtde_partidas = int(input("Quantas partidas deseja ver por vez? "))
             modo = input("Do ultimo confronto até o primeiro (D) ou do primeiro confronto até o ultimo (C)? ")   
-            
+            j=0;
             while option.upper() == "S" and temPartidas:
                 if modo.upper() == "C" or modo.upper() == "D":
                     if modo.upper() == "D":
-                        sorted(indices_partidas, reverse=True)
-                    i=0
+                        indices_partidas_final = sorted(indices_partidas_final, reverse=True)
+
                     for i in range(qtde_partidas):
-                        if ((i+j) < len(indices_partidas)):
-                            partida = fun.getPartida(indices_partidas[i+j])
+                        if ((i+j) < len(indices_partidas_final)):
+                            partida = fun.getPartida(indices_partidas_final[i+j])
                             printaPartida(partida)
                             print("------------------")
                         else: 
@@ -269,7 +279,7 @@ def history():
                 else:
                     print("Fim das partidas.")
 
-        print("Deseja escolher outros times para analisar?")
+        print("Deseja analisar novamente?")
         doFunction = input("S/N: ")
 
 history()
