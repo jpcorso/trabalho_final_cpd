@@ -355,6 +355,9 @@ def vitoriasDerrotas():
     #print(vitoriasTupla)
     #print(derrotasTupla)
 
+def printaPartida (partida):
+    return print(partida)
+    
 def precoTimes():
      
     partidas_f = open('./arquivos/partidas.bin', 'rb')

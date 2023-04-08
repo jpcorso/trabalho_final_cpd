@@ -106,7 +106,7 @@ def arbitros():
                                     
 
     
-
+arbitros()
                             
 
                             
