@@ -130,23 +130,17 @@ def maiorPublico():
 
     #print(estadios)
 
-    publicoAndIndices = [(valor, indice, estadios[indice]) for indice, valor in enumerate(publico)]
+    publicoAndIndices = [(valor, indice) for indice, valor in enumerate(publico)]
 
     publicoSorted = sorted(publicoAndIndices, reverse = True)
 
     top10 = publicoSorted[:10]
 
-    for valor, posicao, estadios in top10:
+    for valor, posicao in top10:
         partidas_f.seek(indices_partida[posicao]["indice"])
         partida = pickle.load(partidas_f)
 
-        times_f.seek(indices_times[partida['time_man']]["indice"])
-        time_man = pickle.load(times_f)
-
-        times_f.seek(indices_times[partida['time_vis']]["indice"])
-        time_vis = pickle.load(times_f)
-
-        nova_tupla_publico = (time_man['nome'], time_vis["nome"], valor, estadios)
+        nova_tupla_publico = (partida["id"])
         publicoTupla.append(nova_tupla_publico)
 
     with open("./rankings/publico.bin", "wb") as arquivo:
@@ -315,13 +309,13 @@ def vitoriasDerrotas():
             if partida["time_man"] == time["id"]:
                 if partida["gols_man"] > partida["gols_vis"]:
                     vitorias[i] += 1
-                else:
+                elif partida["gols_man"] < partida["gols_vis"]:
                     derrotas[i] += 1
             
             if partida["time_vis"] == time["id"]:
                 if partida["gols_vis"] > partida["gols_man"]:
                     vitorias[i] += 1
-                else:
+                elif partida["gols_vis"] < partida["gols_man"]:
                     derrotas[i] += 1
 
     vitAndIndices = [(valor, indice) for indice, valor in enumerate(vitorias)]
@@ -425,22 +419,22 @@ def precoTimes():
     maisCarosTupla = []
     ano_ja_foi = set()
 
+    manOuVis = ""
+    manOuVisBar = ""
     for valor, posicao, flag in topFinalSorted:
         partidas_f.seek(indices_partida[posicao]["indice"])
         partida = pickle.load(partidas_f)
 
         if flag == "m":
-            times_f.seek(indices_times[partida['time_man']]["indice"])
-            time = pickle.load(times_f)
+            manOuVis = "m"
 
         if flag == "v":
-            times_f.seek(indices_times[partida['time_vis']]["indice"])
-            time = pickle.load(times_f)
+            manOuVis = "v"
 
         if partida['ano_campeonato'] in ano_ja_foi: # verifica se o time já está na lista
             continue
 
-        nova_tupla_preco = (time['nome'], valor, ano[posicao])
+        nova_tupla_preco = (partida["id"], manOuVis)
         maisCarosTupla.append(nova_tupla_preco)  
 
         #print(f"Idade Média: {valor}, Time: {time['nome']}, Ano:{ano[posicao]}")
@@ -457,17 +451,15 @@ def precoTimes():
         partida = pickle.load(partidas_f)
 
         if flag == "m":
-            times_f.seek(indices_times[partida['time_man']]["indice"])
-            time = pickle.load(times_f)
+            manOuVisBar = "m"
 
         if flag == "v":
-            times_f.seek(indices_times[partida['time_vis']]["indice"])
-            time = pickle.load(times_f)
+            manOuVisBar = "v"
 
         if partida['ano_campeonato'] in ano_ja_ta_rev: # verifica se o time já está na lista
             continue
 
-        nova_tupla_idade_rev = (time['nome'], valor, ano[posicao])
+        nova_tupla_idade_rev = (partida["id"], manOuVisBar)
         maisBaratosTupla.append(nova_tupla_idade_rev)  
 
         #print(f"Idade Média: {valor}, Time: {time['nome']}, Ano:{ano[posicao]}")
@@ -483,6 +475,6 @@ def precoTimes():
 
 precoTimes()
 #vitoriasDerrotas()
-mediaIdade()
+#mediaIdade()
 #maisGols()
 #maiorPublico()

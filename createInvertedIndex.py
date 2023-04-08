@@ -51,3 +51,5 @@ with open("./arquivos_invertidos/times_invertidos.bin", "wb") as arquivo:
 with open("./indices_arquivos/indices_times_invertidos.bin", "wb") as arquivo:
     pickle.dump(indices,arquivo)
 
+print(indices)
+

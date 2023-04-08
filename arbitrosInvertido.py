@@ -40,11 +40,20 @@ for i in range(len(indices_arbitros)):
 for arbitro in arbitrosInvertido:
     del arbitro['id_arb']
 
+indices = {}; ##aqui entraria a árvore e salvaríamos aqui os indices
+with open("./arquivos_invertidos/arbitros_invertidos.bin", "wb") as arquivo:
+    i=0;
+    for arbitroInv in arbitrosInvertido:
+        indices[arbitroInv["nome"]] = arquivo.tell();
+        pickle.dump(arbitroInv, arquivo)
+        i+=1
+
     #for arbitro in arbitrosInvertido:
         #arbitro["id_arb"] = 
 
-with open("./arquivos_invertidos/arbitros_invertidos.bin", "wb") as arquivo:
-    pickle.dump(arbitrosInvertido,arquivo)
+#print(arbitrosInvertido)
 
+with open("./indices_arquivos/indices_arbitros_invertidos.bin", "wb") as arquivo:
+    pickle.dump(indices,arquivo)
 
-print(arbitrosInvertido)
+#print(indices)
