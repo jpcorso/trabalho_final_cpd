@@ -8,22 +8,22 @@ class Trie:
 
   def getNode(self):
     ##children vai ter que ser o f tell
-    return {"isLeaf": False, "children": {}}
+    return {"isLeaf": False, "children": {}, "code": -1}
 
-  def insertWord(self, file, word):
+  def insertWord(self,word,code):
     current = self.root
     for ch in word:
       if ch in current["children"]:
         node = current["children"][ch]
-        pickle.dump(node,file)
       else:
         node = self.getNode()
         current["children"][ch] = node
 
       current = node
-    current["isEndOfWord"] = True
+    current["isLeaf"] = True
+    current["code"] = code
 
-  def searchWord(self, word):
+  def searchNode(self, word):
     current = self.root
     for ch in word:
       if not ch in current["children"]:
@@ -31,7 +31,7 @@ class Trie:
       node = current["children"][ch]
 
       current = node
-    return current["isEndOfWord"]
+    return current
 
   def searchWordPrefix(self, word):
     current = self.root
@@ -49,9 +49,9 @@ class Trie:
 
   def _delete(self, current, word, index):
     if(index == len(word)):
-      if not current["isEndOfWord"]:
+      if not current["isLeaf"]:
         return False
-      current["isEndOfWord"] = False
+      current["isLeaf"] = False
       return len(current["children"].keys()) == 0
 
     ch = word[index]
