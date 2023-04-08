@@ -46,34 +46,40 @@ def printaPartida(partida):
         elif (partida[key] != None and key != "id"):
             print(dictionary[key]+" "+str(partida[key])+"")
 
+def indice_do_time(time,indices_times):
+    timeExiste = indices_times.pesquisa_time(time.title())
+    if (not timeExiste):
+        print("Não foi encontrado na base de dados. Cuide com os acentos.")
+        for i in range(len(time)):
+            sugestoes = indices_times.todos_os_times_com(time[:len(time)-i].title())
+            if len(sugestoes) > 0:
+                print("Talvez você queira pesquisar:")
+                for sugestao in sugestoes:
+                    print(f"-{sugestao[0]}")
+                print('')
+                break;
+        return False;
+    else:
+        return timeExiste[1]
+
 def history():
     doFunction = "S"
     while doFunction.upper() == "S":
         print("Histórico entre dois times!");
-        indices_time1 = None;
+
+        indices_times = None;
         with open("./indices_arquivos/indices_times_invertidos.bin", "rb") as arquivo:
-            indices_time1 = pickle.load(arquivo)
+            indices_times = pickle.load(arquivo)
+            
+            indice_time_1 = 0;
+            while not indice_time_1:
+                time_1 = input("\nPrimeiro time: ");
+                indice_time_1 = indice_do_time(time_1, indices_times)
 
-        times_invertidos = open("./arquivos_invertidos/times_invertidos.bin", "rb")
-        timeExiste = False
-        while not timeExiste:
-            time_1 = input("Primeiro time: ");
-            try:
-                times_invertidos.seek(indices_time1[time_1])
-                timeExiste = True
-            except KeyError as e:
-                print("Não foi encontrado na base de dados. Tente outro ou verifique o nome digitado (case sensitive).");
-
-        ids_time_1 = pickle.load(times_invertidos)["ids"]
-
-        timeExiste = False
-        while not timeExiste:
-            time_2 = input("Segundo time: ");
-            try:
-                times_invertidos.seek(indices_time1[time_2])
-                timeExiste = True
-            except KeyError as e:
-                print("Não foi encontrado na base de dados. Tente outro ou verifique o nome digitado (case sensitive).");
+            indice_time_2 = 0;
+            while not indice_time_2:
+                time_2 = input("Segundo time: ");
+                indice_time_2 = indice_do_time(time_2, indices_times)
 
         print("Escolha um período. Vão de 2003 até 2020.");
 
@@ -113,81 +119,79 @@ def history():
         indice_final_loop=0
 
         try:
-            times_invertidos.seek(indices_time1[time_1])
-            ids_time_1 = pickle.load(times_invertidos)["ids"]
-            primeiraPartida = False
-            for i in range(len(ids_time_1)):
-                partida = fun.getPartida(ids_time_1[i]);
+            with open("./arquivos_invertidos/times_invertidos.bin", "rb") as times_invertidos:
+                times_invertidos.seek(indice_time_1)
+                registro_1 = pickle.load(times_invertidos)
+
+                times_invertidos.seek(indice_time_2)
+                registro_2 = pickle.load(times_invertidos)
+            ids_time_1 = registro_1["ids"]
+            ids_time_2 = registro_2["ids"]
+            nome_time_1 = registro_1["nome"]
+            nome_time_2 = registro_2["nome"]
+
+            indices_partidas = [value for value in ids_time_1 if value in ids_time_2] ;
+            for i in range(len(indices_partidas)):
+                partida = fun.getPartida(indices_partidas[i]);
                 if (partida["ano_campeonato"] >= int(ano_inicio)) and (partida["ano_campeonato"] <= int(ano_fim)):
-                    if ((partida["time_man"] == time_1 and partida["time_vis"] == time_2) 
-                        or
-                        (partida["time_man"] == time_2 and partida["time_vis"] == time_1)):
-                        if (primeiraPartida == False):
-                            indice_inicial_arq = i
-                            primeiraPartida = True
+                    if (partida["time_man"].title() == time_1.title()):
+                        if(partida["gols_man"] > partida["gols_vis"]):
+                            vitorias_1+=1
+                        elif(partida["gols_man"] < partida["gols_vis"]):
+                            vitorias_2+=1
+                        else:
+                            empates+=1
 
-                        indices_partidas.append(partida["id"])
+                        maior_publico = partida["publico"]
+                        if maior_publico == None:
+                            maior_publico = 0
 
-                        if (partida["time_man"] == time_1):
-                            if(partida["gols_man"] > partida["gols_vis"]):
-                                vitorias_1+=1
-                            elif(partida["gols_man"] < partida["gols_vis"]):
-                                vitorias_2+=1
-                            else:
-                                empates+=1
-
-                            maior_publico = partida["publico"]
-                            if maior_publico == None:
-                                maior_publico = 0
-
-                            if maior_publico >= maior_publico_1["publico"]:
-                                maior_publico_1 = {"id": partida["id"], "publico": maior_publico}
-                        elif (partida["time_vis"] == time_1):
-                            if(partida["gols_man"] > partida["gols_vis"]):
-                                vitorias_2+=1
-                            elif(partida["gols_man"] < partida["gols_vis"]):
-                                vitorias_1+=1
-                            else:
-                                empates+=1 
-                            
-                            maior_publico = partida["publico"]
-                            if maior_publico == None:
-                                maior_publico = 0
-
-                            if maior_publico >= maior_publico_2["publico"]:
-                                maior_publico_2 = {"id": partida["id"], "publico": maior_publico}
-                    
-                        total_gols = partida["gols_man"]+partida["gols_vis"]
-                        if total_gols > mais_gols[0]["total_gols"]:
-                            mais_gols = [{
-                                "id": partida["id"], 
-                                "total_gols": total_gols, 
-                            }]
-                        elif total_gols == mais_gols[0]["total_gols"]:
-                            mais_gols.append({
-                                "id": partida["id"], 
-                                "total_gols": total_gols, 
-                            })  
+                        if maior_publico >= maior_publico_1["publico"]:
+                            maior_publico_1 = {"id": partida["id"], "publico": maior_publico}
+                    elif (partida["time_vis"].title() == time_1.title()):
+                        if(partida["gols_man"] > partida["gols_vis"]):
+                            vitorias_2+=1
+                        elif(partida["gols_man"] < partida["gols_vis"]):
+                            vitorias_1+=1
+                        else:
+                            empates+=1 
                         
-                        diff = abs(partida["gols_man"]-partida["gols_vis"])
-                        if diff > maior_goleada[0]["diff"]:
-                            maior_goleada = [{
-                                "id": partida["id"],
-                                "diff": diff,
-                            }]
-                        elif diff == maior_goleada[0]["diff"]:
-                            maior_goleada.append({
-                                "id": partida["id"],
-                                "diff": diff,
-                            })
-                            
-                        if (partida["ano_campeonato"] == 2020 and partida["rodada"] == 38):
-                            print("Fim das partidas.");
-                            indice_final_loop = i;
-                            break;  
+                        maior_publico = partida["publico"]
+                        if maior_publico == None:
+                            maior_publico = 0
+
+                        if maior_publico >= maior_publico_2["publico"]:
+                            maior_publico_2 = {"id": partida["id"], "publico": maior_publico}
+                
+                    total_gols = partida["gols_man"]+partida["gols_vis"]
+                    if total_gols > mais_gols[0]["total_gols"]:
+                        mais_gols = [{
+                            "id": partida["id"], 
+                            "total_gols": total_gols, 
+                        }]
+                    elif total_gols == mais_gols[0]["total_gols"]:
+                        mais_gols.append({
+                            "id": partida["id"], 
+                            "total_gols": total_gols, 
+                        })  
+                    
+                    diff = abs(partida["gols_man"]-partida["gols_vis"])
+                    if diff > maior_goleada[0]["diff"]:
+                        maior_goleada = [{
+                            "id": partida["id"],
+                            "diff": diff,
+                        }]
+                    elif diff == maior_goleada[0]["diff"]:
+                        maior_goleada.append({
+                            "id": partida["id"],
+                            "diff": diff,
+                        })
+                        
+                    if (partida["ano_campeonato"] == 2020 and partida["rodada"] == 38):
+                        print("Fim das partidas.");
+                        break;  
                 elif(partida["ano_campeonato"] > int(ano_fim)): 
                     print("Fim das partidas.");
-                    indice_final_loop = i-1;
                     break;
                 i+=1
         except IndexError as e:
@@ -198,11 +202,11 @@ def history():
 
         tempo_exec = fim - inicio;
 
-        print(f"{time_1} x {time_2}")
+        print(f"{nome_time_1} x {nome_time_2}")
         print(f"Analisando entre {ano_inicio} e {ano_fim}")
         print(f"Tempo empregado: {tempo_exec}s")
-        print(f"Vitórias do {time_1}: {vitorias_1}")
-        print(f"Vitórias do {time_2}: {vitorias_2}")
+        print(f"Vitórias do {nome_time_1}: {vitorias_1}")
+        print(f"Vitórias do {nome_time_2}: {vitorias_2}")
         print(f"Empates: {empates}")
         print("__________________________________________")
         print("Partida com mais gols:")
@@ -220,51 +224,50 @@ def history():
             print(f"------Placar: {partida_goleada['time_man']} {str(partida_goleada['gols_man'])} x {str(partida_goleada['gols_vis'])} {partida_goleada['time_vis']}")
             print(f"---")
         print("__________________________________________")
-        print(f"Partida com mais público para o {time_1}:")
+        print(f"Partida com mais público para o {nome_time_1}:")
         partida_publico = fun.getPartida(maior_publico_1["id"]);
         print(f"------"+partida_publico["time_man"]+" "+str(partida_publico["gols_man"])+" x "+str(partida_publico["gols_vis"])+" "+partida_publico["time_vis"])
         print(f"------Data: " + partida_publico["data"].strftime('%d/%m/%Y'))
         print(f"------Estádio: " + partida_publico["estadio"]+"")
         print(f"------Publico: " + str(partida_publico["publico"]))
         print("__________________________________________")
-        print(f"Partida com mais público para o {time_2}:")
+        print(f"Partida com mais público para o {nome_time_2}:")
         partida_publico = fun.getPartida(maior_publico_2["id"]);
         print(f"------"+partida_publico["time_man"]+" "+str(partida_publico["gols_man"])+" x "+str(partida_publico["gols_vis"])+" "+partida_publico["time_vis"])
         print(f"------Data: " + partida_publico["data"].strftime('%d/%m/%Y'))
         print(f"------Estádio: " + partida_publico["estadio"]+"")
         print(f"------Publico: " + str(partida_publico["publico"]))
                 
-        print(f"Deseja ver as partidas de {time_1} e {time_2} no periodo?")
+        print(f"Deseja ver as partidas de {nome_time_1} e {nome_time_2} no periodo?")
         option = input("S/N: ")
-        j=0
-        qtde_partidas = int(input("Quantas partidas deseja ver por vez? "))
-        modo = input("Do ultimo confronto até o primeiro (D) ou do primeiro confronto até o ultimo (C)? ")   
-         
-        while option.upper() == "S" and temPartidas:
-            if modo.upper() == "C" or modo.upper() == "D":
-                if modo.upper() == "D":
-                    sorted(indices_partidas, reverse=True)
-                i=0
-                for i in range(qtde_partidas):
-                    if ((i+j) < len(indices_partidas)):
-                        partida = fun.getPartida(indices_partidas[i+j])
-                        printaPartida(partida)
-                        print("------------------")
-                    else: 
-                        temPartidas = False;
-                        break;
-            else:
-                print("Saindo da função...")
-                break;
+        if (option.upper() == "S"):
+            qtde_partidas = int(input("Quantas partidas deseja ver por vez? "))
+            modo = input("Do ultimo confronto até o primeiro (D) ou do primeiro confronto até o ultimo (C)? ")   
             
-            if (temPartidas):
-                print("Deseja continuar?")
-                option = input("S/N: ")
-                if option.upper() == "S" : 
-                    j+=qtde_partidas
-            else:
-                print("Fim das partidas.")
-
+            while option.upper() == "S" and temPartidas:
+                if modo.upper() == "C" or modo.upper() == "D":
+                    if modo.upper() == "D":
+                        sorted(indices_partidas, reverse=True)
+                    i=0
+                    for i in range(qtde_partidas):
+                        if ((i+j) < len(indices_partidas)):
+                            partida = fun.getPartida(indices_partidas[i+j])
+                            printaPartida(partida)
+                            print("------------------")
+                        else: 
+                            temPartidas = False;
+                            break;
+                else:
+                    print("Saindo da função...")
+                    break;
+                
+                if (temPartidas):
+                    print("Deseja continuar?")
+                    option = input("S/N: ")
+                    if option.upper() == "S" : 
+                        j+=qtde_partidas
+                else:
+                    print("Fim das partidas.")
 
         print("Deseja escolher outros times para analisar?")
         doFunction = input("S/N: ")

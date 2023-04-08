@@ -2,86 +2,46 @@ import pickle
 
 class TrieNode:
     def __init__(self):
-        self.children = {}
-        self.is_end_of_word = False
-        self.codigo = None
+        self.filhos = {}
+        self.eh_folha = False
+        self.indice = 0
 
 class Trie:
     def __init__(self):
-        self.root = TrieNode()
+        self.raiz = TrieNode()
 
-    def insert_word(self, word, codigo):
-        node = self.root
-        for char in word:
-            if char not in node.children:
-                node.children[char] = TrieNode()
-            node = node.children[char]
-        node.is_end_of_word = True
-        node.codigo = codigo
+    def inserir_time(self, time, indice):
+        nodo = self.raiz
+        for ch in time:
+            if ch not in nodo.filhos:
+                nodo.filhos[ch] = TrieNode()
+            nodo = nodo.filhos[ch]
+        nodo.eh_folha = True
+        nodo.indice = indice
 
-    def search_word(self, word):
-        node = self.root
-        for char in word:
-            if char not in node.children:
+    def pesquisa_time(self, time):
+        nodo = self.raiz
+        for ch in time:
+            if ch not in nodo.filhos:
                 return False
-            node = node.children[char]
-        return node.is_end_of_word, node.codigo
+            nodo = nodo.filhos[ch]
+        if (nodo.eh_folha):
+            return nodo.eh_folha, nodo.indice
+        else:
+            return False
 
-    def get_words_with_prefix(self, prefix):
-        node = self.root
-        for char in prefix:
-            if char not in node.children:
+    def todos_os_times_com(self, prefixo):
+        nodo = self.raiz
+        for ch in prefixo:
+            if ch not in nodo.filhos:
                 return []
-            node = node.children[char]
-        return self._collect_words(node, prefix)
+            nodo = nodo.filhos[ch]
+        return self._pega_times(nodo, prefixo)
 
-    def _collect_words(self, node, prefix):
-        words = []
-        if node.is_end_of_word:
-            words.append((prefix, node.codigo))
-        for char in node.children:
-            words.extend(self._collect_words(node.children[char], prefix + char))
-        return words
-    
-# Cria uma nova árvore trie
-trie = Trie()
-
-# Insere cada mês e a quantidade de dias na árvore trie
-trie.insert_word("janeiro", 31)
-trie.insert_word("fevereiro", 28)
-trie.insert_word("março", 31)
-trie.insert_word("abril", 30)
-trie.insert_word("maio", 31)
-trie.insert_word("junho", 30)
-trie.insert_word("julho", 31)
-trie.insert_word("agosto", 31)
-trie.insert_word("setembro", 30)
-trie.insert_word("outubro", 31)
-trie.insert_word("novembro", 30)
-trie.insert_word("dezembro", 31)
-
-with open("arvore_trie.bin", "wb") as f:
-    pickle.dump(trie, f)
-
-# Carrega a árvore trie de um arquivo binário
-with open("arvore_trie.bin", "rb") as f:
-    trie = pickle.load(f)
-
-# Usa a árvore trie normalmente
-mes = "março"
-existe_mes, dias = trie.search_word(mes)
-
-if existe_mes:
-    print(f"O mês de {mes} tem {dias} dias.")
-else:
-    print(f"O mês de {mes} não está na árvore trie.")
-
-prefixo = "j"
-meses = trie.get_words_with_prefix(prefixo)
-
-if len(meses) > 0:
-    print(f"Os meses que começam com '{prefixo}' são:")
-    for mes, dias in meses:
-        print(f"{mes.capitalize()} tem {dias} dias.")
-else:
-    print(f"Nenhum mês começa com '{prefixo}' na árvore trie.")
+    def _pega_times(self, nodo, prefixo):
+        times = []
+        if nodo.eh_folha:
+            times.append((prefixo, nodo.indice))
+        for ch in nodo.filhos:
+            times.extend(self._pega_times(nodo.filhos[ch], prefixo + ch))
+        return times
