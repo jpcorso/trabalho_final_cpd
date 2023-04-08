@@ -103,11 +103,7 @@ def arbitros():
                     window.Element('-TEXT_APROVEITAMENTO-').Update(f"Sem dados de partidas do {nomeArbitro} com o {nomeTime}")
                     window.Element('-APROVEITAMENTO-').Update(f"Sem dados de partidas do {nomeArbitro} com o {nomeTime}")
                     pontosGanhos = pontosDisputados = noneTypeFaltas = 0
-                                    
-
-    
-arbitros()
-                            
+                                               
 
                             
                             
