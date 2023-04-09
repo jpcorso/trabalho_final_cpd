@@ -3,7 +3,7 @@ import getPartida as fun
 import PySimpleGUI as sg
 
 def arbitros():
-    sg.theme('')
+    sg.theme('DarkGrey14')
 
     layout = [
         [sg.Text('Pesquise um árbitro:', font=('Helvetica', 14), size=(15,1)),
@@ -15,15 +15,13 @@ def arbitros():
         [sg.Text('Média de faltas por jogo:', font=('Helvetica', 14), size=(30,1))],
         [sg.Text('', size=(20, 1), key='-MEDIA_FALTAS-')],
         [sg.Text('',font=('Helvetica', 14), size=(50,1), key='-TEXT_APROVEITAMENTO-')],
-        [sg.Text('', size=(80, 1), key='-APROVEITAMENTO-')],  # Novo elemento para exibir o resultado do aproveitamento
+        [sg.Text('', size=(50, 1), key='-APROVEITAMENTO-')],  # Novo elemento para exibir o resultado do aproveitamento
         [sg.Text('', size=(40, 10))],
         [sg.Text('Partidas:', font=('Helvetica', 14), size=(35,1))],
         [sg.Listbox(values=[], size=(50, 10), key='-PARTIDAS-')],
     ]
 
     window = sg.Window('Aproveitamento de Árbitro', layout)
-
-    window.read()
 
     indices_arbitros_f = open('./indices_arquivos/indices_arbitros_invertidos.bin', 'rb')
     indices_arbitros = pickle.load(indices_arbitros_f)
@@ -32,14 +30,13 @@ def arbitros():
     arbitros = pickle.load(arbitros_f)
 
     numFaltas = noneTypeFaltas = 0
-    window['Ver Aproveitamento'].update(disabled=True)
-    window['time'].update(disabled=True)
 
     while True:
         numFaltas = noneTypeFaltas = 0  # Reinicialização das variáveis
         event, values = window.read()
         
         if event == sg.WIN_CLOSED:
+            window.close()
             break
 
         if event == 'Pesquisar':
@@ -55,11 +52,13 @@ def arbitros():
                     numFaltas += partida["faltas_man"] + partida["faltas_vis"]
                 else:
                     noneTypeFaltas += 1
-
-                partidas.append(f'{partida["time_man"]} vs {partida["time_vis"]}')
+                partidas.append(f"------{partida['data'].strftime('%d/%m/%Y')}------")
+                partidas.append(f'{partida["time_man"]} {partida["gols_man"]} vs {partida["gols_vis"]} {partida["time_vis"]}')
 
             if len(arbitro_ids) - noneTypeFaltas > 0:
                 mediaFaltas = numFaltas / (len(arbitro_ids) - noneTypeFaltas)
+                mediaFaltas = round(mediaFaltas, 2)
+                
             else:
                 mediaFaltas = "Este árbitro não possui dados de faltas."
 
@@ -69,8 +68,7 @@ def arbitros():
             # ativa a opção de pesquisa pelo time
             window['Ver Aproveitamento'].update(disabled=False)
             window['time'].update(disabled=False)
-
-
+            window['-PARTIDAS-'].set_vscroll_position(0)
             
         if event == 'Ver Aproveitamento':
             nomeTime = values['time']
@@ -98,13 +96,10 @@ def arbitros():
                     aproveitamento = round(aproveitamento,2)
 
                     window.Element('-TEXT_APROVEITAMENTO-').Update(f"Aproveitamento do {nomeTime} com o árbitro {nomeArbitro}:")
-                    window.Element('-APROVEITAMENTO-').Update(f"Aproveitamento do {nomeTime} com o árbitro {nomeArbitro}: {aproveitamento}%")
+                    window.Element('-APROVEITAMENTO-').Update(f"{aproveitamento}%")
                 else:
                     window.Element('-TEXT_APROVEITAMENTO-').Update(f"Sem dados de partidas do {nomeArbitro} com o {nomeTime}")
-                    window.Element('-APROVEITAMENTO-').Update(f"Sem dados de partidas do {nomeArbitro} com o {nomeTime}")
                     pontosGanhos = pontosDisputados = noneTypeFaltas = 0
-                                               
-
-                            
+                       
                             
                             

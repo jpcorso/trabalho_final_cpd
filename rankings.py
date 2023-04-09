@@ -40,6 +40,7 @@ def exibir_rankings():
                     print(f'Estádio: {partida["estadio"]}')
                     print(f'Data: {partida["data"].strftime("%d/%m/%Y")}')
                     print("-------------------------------------")
+            window['output'].set_vscroll_position(0)
 
         elif event == 'gols':
             with open('./rankings/gols.bin', 'rb') as gols_file:
@@ -55,6 +56,7 @@ def exibir_rankings():
                         count += 1 # incrementa a contagem
                     else:
                         break # interrompe o loop quando a contagem chega a 10
+            window['output'].set_vscroll_position(0)
 
         elif event == 'vitorias':
             with open('./rankings/vitorias.bin', 'rb') as vitorias_file:
@@ -70,6 +72,7 @@ def exibir_rankings():
                         count += 1
                     else:
                         break
+            window['output'].set_vscroll_position(0)
 
         elif event == "derrotas":
             with open('./rankings/derrotas.bin', 'rb') as derrotas_file:
@@ -85,9 +88,10 @@ def exibir_rankings():
                         count += 1
                     else:
                         break
+            window['output'].set_vscroll_position(0)
 
         elif event == "idade_maior":
-               with open('./rankings/media_idade_maior.bin', 'rb') as media_idade_maior_file:
+            with open('./rankings/media_idade_maior.bin', 'rb') as media_idade_maior_file:
                 # carrega o conteúdo do arquivo para a memória
                 media_idade_maior = pickle.load(media_idade_maior_file);
                 window['output'].update('')
@@ -102,6 +106,7 @@ def exibir_rankings():
                         count += 1
                     else:
                         break
+            window['output'].set_vscroll_position(0)
 
         elif event == "idade_menor":
             with open('./rankings/media_idade_menor.bin', 'rb') as media_idade_menor_file:
@@ -119,6 +124,7 @@ def exibir_rankings():
                         count += 1
                     else:
                         break
+            window['output'].set_vscroll_position(0)
 
         elif event == "mais_caros":
             with open('./rankings/mais_caros.bin', 'rb') as mais_caros_file:
@@ -150,6 +156,7 @@ def exibir_rankings():
                         count += 1
                     else: 
                         break
+                window['output'].set_vscroll_position(0)
             
         elif event == "mais_baratos":
             with open('./rankings/mais_baratos.bin', 'rb') as mais_baratos_file:
@@ -181,3 +188,4 @@ def exibir_rankings():
                         count += 1
                     else:
                         break
+                window['output'].set_vscroll_position(0)

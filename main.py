@@ -9,7 +9,7 @@ sg.theme('DarkGrey14')
 layout = [
     [sg.Text('futeTUDO - Saiba tudo sobre o mundo da bola', font=('Helvetica', 20), justification='center')],
     [sg.Text('Escolha uma das opções abaixo:', font=('Helvetica', 16), justification='center')],
-    [sg.Button('Históricos', size=(15, 2)), sg.Button('Confrontos', size=(15, 2)), sg.Button('Árbitros', size=(15, 2)), sg.Button('Rankings', size=(15, 2))],
+    [sg.Button('Histórico', size=(15, 2)), sg.Button('Confrontos', size=(15, 2)), sg.Button('Árbitros', size=(15, 2)), sg.Button('Rankings', size=(15, 2))],
     [sg.Text('', size=(40, 10))] # Adiciona um espaço em branco abaixo das opções
 ]
 
@@ -24,7 +24,7 @@ while True:
     if event == sg.WIN_CLOSED:
         break
     elif event == 'Histórico':
-        TH.teamHistory()
+        TH.history()
     elif event == 'Confrontos':
         CONF.history()
     elif event == 'Árbitros':
