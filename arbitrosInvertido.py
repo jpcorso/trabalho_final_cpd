@@ -1,59 +1,45 @@
 import getPartida as fun
 import pickle
+import trieGPT as trie
+i=1
+tem_partida=True
+arbitros=[]
+primeira_partida = fun.getPartida(0);
+if (primeira_partida["arbitro"] == '' or primeira_partida["arbitro"] == None):
+    primeiro_tecnico = 'Sem arbitro';
+else:
+    primeiro_tecnico = fun.getPartida(0)["arbitro"];
 
-indices_partidas_f = open('./indices_arquivos/indices_partidas.bin', 'rb')
-indices_partida = pickle.load(indices_partidas_f)
+arbitros.append({"nome": primeiro_tecnico, "ids":[0]})
+while tem_partida:
+    try:
+        partida = fun.getPartida(i);
+        if (partida["arbitro"] == '' or partida["arbitro"] == None):
+            partida["arbitro"] = 'Sem arbitro'
+        arbitro_partida = partida["arbitro"]
+        ja_tem_arb = False;
+        j=0
+        for arbitro in arbitros:
+            if(arbitro_partida == arbitro["nome"]):
+                arbitros[j]["ids"].append(i)
+                ja_tem_arb = True;
+                break;
+            j+=1
+        if(not ja_tem_arb):
+            arbitros.append({"nome": partida["arbitro"], "ids":[i]})
+        print(i)
+        i+=1    
+    except IndexError as e:
+        print("Fim das partidas.")
+        tem_partida = False
 
-arbitros_f = open('./arquivos/arbitros.bin', 'rb')
-#arbitros = pickle.load(arbitros_f)
+arvore_trie = trie.Trie()
 
-indices_arbitros_f = open('./indices_arquivos/indices_arbitros.bin', 'rb')
-indices_arbitros = pickle.load(indices_arbitros_f)
-
-partidas_f = open('./arquivos/partidas.bin', 'rb')
-
-arbitrosInvertido = []
-
-for i in range(len(indices_arbitros)):
-    arbitros_f.seek(indices_arbitros[i]["indice"])
-    arbitros = pickle.load(arbitros_f)
-    arbitro_dict = {"nome": arbitros["nome"], "id_arb": arbitros["id"], "ids": []}
-    arbitrosInvertido.append(arbitro_dict)
-
-    partidas_f.seek(0)
-    
-    for j in range(len(indices_partida)):
-        partida = (pickle.load(partidas_f))
-        if partida["arbitro"] == arbitro_dict["id_arb"]:
-            arbitro_dict["ids"].append(partida["id"])
-            continue
-
-        arbitro_ids = [a["id_arb"] for a in arbitrosInvertido]
-
-        if partida["arbitro"] not in arbitro_ids:
-            arbitro_dict = {"nome": arbitros["nome"], "id_arb": partida["arbitro"], "ids": [partida["id"]]}
-            arbitrosInvertido.append(arbitro_dict)
-        else:
-            index = arbitro_ids.index(partida["arbitro"])
-            arbitrosInvertido[index]["ids"].append(partida["id"])
-
-for arbitro in arbitrosInvertido:
-    del arbitro['id_arb']
-
-indices = {}; ##aqui entraria a árvore e salvaríamos aqui os indices
 with open("./arquivos_invertidos/arbitros_invertidos.bin", "wb") as arquivo:
-    i=0;
-    for arbitroInv in arbitrosInvertido:
-        indices[arbitroInv["nome"]] = arquivo.tell();
-        pickle.dump(arbitroInv, arquivo)
-        i+=1
-
-    #for arbitro in arbitrosInvertido:
-        #arbitro["id_arb"] = 
-
-#print(arbitrosInvertido)
+    for arbitro in arbitros:
+        print(arbitro)
+        arvore_trie.inserir_time(arbitro["nome"].title(),arquivo.tell())
+        pickle.dump(arbitro, arquivo)
 
 with open("./indices_arquivos/indices_arbitros_invertidos.bin", "wb") as arquivo:
-    pickle.dump(indices,arquivo)
-
-#print(indices)
+    pickle.dump(arvore_trie,arquivo)

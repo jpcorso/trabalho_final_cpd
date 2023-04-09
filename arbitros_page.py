@@ -1,6 +1,7 @@
 import pickle
 import getPartida as fun
 import PySimpleGUI as sg
+import functions as utils
 
 def arbitros():
     sg.theme('DarkGrey14')
@@ -12,6 +13,7 @@ def arbitros():
         [sg.Text('Nome do time:', font=('Helvetica', 14), size=(15,1)),
         sg.InputText(key='time', size=(20,1), disabled=True),  # Define o estado inicial como desativado
         sg.Button('Ver Aproveitamento', size=(15,1), disabled=True)],  # Define o estado inicial como desativado
+        [sg.Output(size=(63, 4), key='output')],
         [sg.Text('Média de faltas por jogo:', font=('Helvetica', 14), size=(30,1))],
         [sg.Text('', size=(20, 1), key='-MEDIA_FALTAS-')],
         [sg.Text('',font=('Helvetica', 14), size=(50,1), key='-TEXT_APROVEITAMENTO-')],
@@ -22,9 +24,6 @@ def arbitros():
     ]
 
     window = sg.Window('Aproveitamento de Árbitro', layout)
-
-    indices_arbitros_f = open('./indices_arquivos/indices_arbitros_invertidos.bin', 'rb')
-    indices_arbitros = pickle.load(indices_arbitros_f)
 
     arbitros_f = open('./arquivos_invertidos/arbitros_invertidos.bin', 'rb')
     arbitros = pickle.load(arbitros_f)
@@ -40,8 +39,18 @@ def arbitros():
             break
 
         if event == 'Pesquisar':
+            window['output'].update("")
             nomeArbitro = values['arbitro']
-            arbitros_f.seek(indices_arbitros[nomeArbitro])
+            with open("./indices_arquivos/indices_arbitros_invertidos.bin", "rb") as arquivo:
+                indices_arbitro = pickle.load(arquivo)
+                indice_arbitro = utils.indice_do_item(nomeArbitro, indices_arbitro)
+                if not indice_arbitro:
+                    window['output'].set_vscroll_position(0)
+                    continue
+            
+            print("Árbitro encontrado com sucesso!")
+
+            arbitros_f.seek(indice_arbitro)
             arbitro_ids = pickle.load(arbitros_f)["ids"]
             partidas = []
 
@@ -71,7 +80,16 @@ def arbitros():
             window['-PARTIDAS-'].set_vscroll_position(0)
             
         if event == 'Ver Aproveitamento':
+            window['output'].update('')
             nomeTime = values['time']
+            with open("./indices_arquivos/indices_times_invertidos.bin", "rb") as arquivo:
+                indices_times = pickle.load(arquivo)
+                indice_time = utils.indice_do_item(nomeTime, indices_times)
+                if not indice_time:
+                    window['output'].set_vscroll_position(0)
+                    continue
+            
+            print("Time encontrado com sucesso!")
             pontosGanhos = pontosDisputados = 0
 
             for i in arbitro_ids:
@@ -100,6 +118,3 @@ def arbitros():
                 else:
                     window.Element('-TEXT_APROVEITAMENTO-').Update(f"Sem dados de partidas do {nomeArbitro} com o {nomeTime}")
                     pontosGanhos = pontosDisputados = noneTypeFaltas = 0
-                       
-                            
-                            

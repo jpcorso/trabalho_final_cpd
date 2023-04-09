@@ -5,21 +5,7 @@ import PySimpleGUI as sg
 import contextlib
 import io
 import modalPartidas as MP
-
-def indice_do_time(time,indices_times):
-    timeExiste = indices_times.pesquisa_time(time.title())
-    if (not timeExiste):
-        print("Não foi encontrado na base de dados. Cuide com os acentos.")
-        for i in range(len(time)):
-            sugestoes = indices_times.todos_os_times_com(time[:len(time)-i].title())
-            if len(sugestoes) > 0:
-                print("Talvez você queira pesquisar:")
-                for sugestao in sugestoes:
-                    print(f"-{sugestao[0]}")
-                break;
-        return False;
-    else:
-        return timeExiste[1]
+import functions as utils
 
 def history():
     sg.theme('DarkGrey14')
@@ -74,7 +60,7 @@ def history():
                 ano_fim = 0
             with open("./indices_arquivos/indices_times_invertidos.bin", "rb") as arquivo:
                 indices_times = pickle.load(arquivo)
-                indice_time = indice_do_time(time_1, indices_times)
+                indice_time = utils.indice_do_item(time_1, indices_times)
                 if not indice_time:
                     esconder_ver_partidas()
                     continue

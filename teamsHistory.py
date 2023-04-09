@@ -3,74 +3,15 @@ import pickle
 import time
 import PySimpleGUI as sg
 import modalPartidas as MP
-
-def printaPartida(partida):
-    dictionary = {
-        "horario" : "Horário do jogo:",
-        "ano_campeonato" : "BRASILEIRÃO",
-        "rodada" : "Rodada:",
-        "estadio" : "Estádio:",
-        "arbitro" : "Árbitro:",
-        "publico" : "Público:",
-        "publico_max" : "Público máximo:",
-        "time_man" : "Time mandante:",
-        "time_vis" : "Time visitante:",
-        "tecnico_man" : "Técnico mandante:",
-        "tecnico_vis" : "Técnico visitante:",
-        "colocacao_man" : "Colocação (MANDANTE):",
-        "colocacao_vis" : "Colocação (VISITANTE):",
-        "valor_equipe_titular_man": "Valor do time titular (MANDANTE): R$",
-        "valor_equipe_titular_vis": "Valor do time titular (VISITANTE): R$",
-        "idade_media_titular_man": "Idade média do time titular (MANDANTE):",
-        "idade_media_titular_vis": "Idade média do time titular (VISITANTE):",
-        "gols_man": "Gols (MANDANTE):",
-        "gols_vis": "Gols (VISITANTE):",
-        "gols_1_tempo_man": "Gols do mandante (1° tempo):",
-        "gols_1_tempo_vis": "Gols do visitante (1° tempo):",
-        "escanteios_man": "Escanteios (MANDANTE):",
-        "escanteios_vis": "Escanteios (VISITANTE):",    
-        "faltas_man": "Faltas (MANDANTE):",
-        "faltas_vis": "Faltas (VISITANTE):",       
-        "chutes_bola_parada_man": "Chutes bola parada (MANDANTE):",
-        "chutes_bola_parada_vis": "Chutes bola parada (VISITANTE):",  
-        "defesas_man": "Defesas (MANDANTE):",
-        "defesas_vis": "Defesas (VISITANTE):",    
-        "impedimentos_man": "Impedimentos (MANDANTE):",
-        "impedimentos_vis": "Impedimentos (VISITANTE):",   
-        "chutes_man": "Chutes (MANDANTE):",
-        "chutes_vis": "Chutes (VISITANTE):", 
-        "chutes_fora_man": "Chutes fora do gol (MANDANTE):",
-        "chutes_fora_vis": "Chutes fora do gol (Visitante):",  
-    }
-    for key in partida.keys():
-        if (key == "data"):
-            print("Data do jogo: "+ partida[key].strftime('%d/%m/%Y')+"")
-        elif (partida[key] != None and key != "id"):
-            print(dictionary[key]+" "+str(partida[key])+"")
-
-def indice_do_time(time,indices_times):
-    timeExiste = indices_times.pesquisa_time(time.title())
-    if (not timeExiste):
-        print("Não foi encontrado na base de dados. Cuide com os acentos.")
-        for i in range(len(time)):
-            sugestoes = indices_times.todos_os_times_com(time[:len(time)-i].title())
-            if len(sugestoes) > 0:
-                print("Talvez você queira pesquisar:")
-                for sugestao in sugestoes:
-                    print(f"-{sugestao[0]}")
-                print('')
-                break;
-        return False;
-    else:
-        return timeExiste[1]
+import functions as utils
 
 def history():
 
     sg.theme('DarkGrey14')
 
     layout = [
-        [sg.Text('Time 1: '), sg.InputText(key='time_1', default_text='Grêmio')],
-        [sg.Text('Time 2: '), sg.InputText(key='time_2', default_text='Internacional')],
+        [sg.Text('Time 1: '), sg.InputText(key='time_1', default_text='')],
+        [sg.Text('Time 2: '), sg.InputText(key='time_2', default_text='')],
         [sg.Text('Ano Início: '), sg.InputText(key='ano_inicio', default_text='2003')],
         [sg.Text('Ano Fim: '), sg.InputText(key='ano_fim', default_text='2020')],
         [sg.Button('Buscar')],
@@ -127,8 +68,8 @@ def history():
             with open("./indices_arquivos/indices_times_invertidos.bin", "rb") as arquivo:
                 indices_times = pickle.load(arquivo)
 
-                indice_time_1 = indice_do_time(time_1, indices_times)
-                indice_time_2 = indice_do_time(time_2, indices_times)
+                indice_time_1 = utils.indice_do_item(time_1, indices_times)
+                indice_time_2 = utils.indice_do_item(time_2, indices_times)
                 if not indice_time_1 or not indice_time_2:
                     esconder_ver_partidas()
                     continue
@@ -310,4 +251,3 @@ def history():
             else: 
                 modo = 'D'
             MP.make_win2(int(ano_inicio), int(ano_fim), nome_time_1, values['qtde_partidas'],indices_partidas,modo)
-history()

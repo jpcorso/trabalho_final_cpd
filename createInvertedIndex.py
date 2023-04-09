@@ -40,7 +40,6 @@ while tem_partida:
 
 arvore_trie = trie.Trie()
 
-indices = {}; ##aqui entraria a árvore e salvaríamos aqui os indices
 with open("./arquivos_invertidos/times_invertidos.bin", "wb") as arquivo:
     i=0;
     for time in times:
@@ -48,11 +47,6 @@ with open("./arquivos_invertidos/times_invertidos.bin", "wb") as arquivo:
         pickle.dump(time, arquivo)
         i+=1
 
-#print(indices)
-#print(times)
-
 with open("./indices_arquivos/indices_times_invertidos.bin", "wb") as arquivo:
     pickle.dump(arvore_trie,arquivo)
-
-print(indices)
 
