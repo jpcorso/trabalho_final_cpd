@@ -1,6 +1,7 @@
 import getPartida as fun
 import pickle
 import time
+import PySimpleGUI as sg
 
 def printaPartida(partida):
     dictionary = {
@@ -63,6 +64,75 @@ def indice_do_time(time,indices_times):
         return timeExiste[1]
 
 def history():
+
+    sg.theme('DarkGrey14')
+
+    layout = [
+        [sg.Text('Time 1: '), sg.Input(key='time1')],
+        [sg.Text('Time 2: '), sg.Input(key='time2')],
+        [sg.Button('Pesquisar')],
+        [sg.Text('Período:')],
+        [sg.Text('Início: '), sg.Input(key='ano_inicio')],
+        [sg.Text('Fim: '), sg.Input(key='ano_fim')],
+        [sg.Button('Últimos 10 anos'), sg.Button('Todos os anos')],
+        [sg.Text('Histórico:')],
+        [sg.Output(size=(80,10))],
+        [sg.Text('Partidas:')],
+        [sg.Multiline(size=(80,10), key='partidas')],
+        [sg.Button('<<'), sg.Button('<'), sg.Input(key='pagina', size=(3,1)), sg.Button('>'), sg.Button('>>')],
+        [sg.Text('Partidas por página:'), sg.Input(key='partidas_por_pagina', size=(3,1), default_text='10')],
+        [sg.Text('', key='mensagem', size=(80,1))]
+    ]
+
+    window = sg.Window('Histórico de confrontos entre times de futebol', layout, resizable=True)
+
+    while True:
+        event, values = window.read()
+  
+        if event == sg.WIN_CLOSED:
+            window.close()
+            break
+
+        if event == 'Pesquisar':
+            time_1 = values['time1']
+            time_2 = values['time2']
+            ano_inicio = values['ano_inicio']
+            ano_fim = values['ano_fim']
+
+            if not time_1 or not time_2 or not ano_inicio or not ano_fim:
+                sg.popup('Por favor, preencha todos os campos.')
+                continue
+
+            try:
+                ano_inicio = int(ano_inicio)
+                ano_fim = int(ano_fim)
+            except ValueError:
+                sg.popup('Os campos "Início" e "Fim" devem ser preenchidos com números.')
+                continue
+
+            if ano_inicio < 2003 or ano_fim > 2020:
+                sg.popup('Período inválido. Escolha um período entre 2003 e 2020.')
+                continue
+
+            time_1, time_2 = time_1.title(), time_2.title()
+
+            indices_times = None
+            with open("./indices_arquivos/indices_times_invertidos.bin", "rb") as arquivo:
+                indices_times = pickle.load(arquivo)
+
+                indice_time_1 = fun.indice_do_time(time_1, indices_times)
+                indice_time_2 = fun.indice_do_time(time_2, indices_times)
+
+            if not indice_time_1:
+                sg.popup(f'{time_1} não foi encontrado.')
+                continue
+
+            if not indice_time_2:
+                sg.popup(f'{time_2} não foi encontrado.')
+                continue
+
+
+
     doFunction = "S"
     while doFunction.upper() == "S":
         print("Histórico entre dois times!");

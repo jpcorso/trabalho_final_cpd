@@ -1,7 +1,7 @@
 import teamHistory as TH
 import rankings as RK
 import arbitros_page as ARB
-import confrontos as CONF
+import teamsHistory as CONF
 import PySimpleGUI as sg
 
 #Define as configurações da janela
@@ -23,7 +23,7 @@ while True:
     # Executa a opção selecionada pelo usuário
     if event == sg.WIN_CLOSED:
         break
-    elif event == 'Históricos':
+    elif event == 'Histórico':
         TH.teamHistory()
     elif event == 'Confrontos':
         CONF.history()
