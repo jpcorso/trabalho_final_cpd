@@ -11,7 +11,7 @@ def history():
     sg.theme('DarkGrey14')
 
     layout = [
-        [sg.Text('Time: '), sg.InputText(key='time', default_text='')],
+        [sg.Text('Time: '), sg.InputText(key='time', default_text='CSA')],
         [sg.Text('Ano Início: '), sg.InputText(key='ano_inicio', default_text='2003')],
         [sg.Text('Ano Fim: '), sg.InputText(key='ano_fim', default_text='2020')],
         [sg.Button('Buscar')],
@@ -219,4 +219,7 @@ def history():
                 modo = 'C'
             else: 
                 modo = 'D'
+                aux = ano_fim
+                ano_fim = ano_inicio
+                ano_inicio = aux
             MP.make_win2(int(ano_inicio), int(ano_fim), nome_time, values['qtde_partidas'],indices_partidas,modo)

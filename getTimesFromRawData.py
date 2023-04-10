@@ -25,15 +25,12 @@ for partida in partidas:
 ##with open("times.bin", "wb") as arquivo:
 ##    pickle.dump(times, arquivo)
         
-print(times)
 
 indices = []; ##aqui entraria a árvore e salvaríamos aqui os indices
 with open("./arquivos/times.bin", "wb") as arquivo:
-    i=0;
     for time in times:
         indices.append({"indice":arquivo.tell()})
         pickle.dump(time ,arquivo)
-        i+=1
 
 with open("./indices_arquivos/indices_times.bin", "wb") as arquivo:
     pickle.dump(indices,arquivo)

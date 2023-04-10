@@ -26,11 +26,9 @@ for partida in partidas:
 
 indices = []; ##aqui entraria a árvore e salvaríamos aqui os indices
 with open("./arquivos/arbitros.bin", "wb") as arquivo:
-    i=0;
     for arbitro in arbitros:
         indices.append({"indice":arquivo.tell()})
         pickle.dump(arbitro ,arquivo)
-        i+=1
 
 with open("./indices_arquivos/indices_arbitros.bin", "wb") as arquivo:
     pickle.dump(indices,arquivo)
