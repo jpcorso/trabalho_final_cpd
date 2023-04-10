@@ -393,6 +393,8 @@ def printaPartida(partida):
         "chutes_fora_man": "Chutes fora do gol (MANDANTE):",
         "chutes_fora_vis": "Chutes fora do gol (Visitante):",  
     }
+                      
+
     for key in partida.keys():
         if (key == "data"):
             print("Data do jogo: "+ partida[key].strftime('%d/%m/%Y')+"")

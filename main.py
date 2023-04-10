@@ -1,20 +1,35 @@
-import teamHistory as TH
 import rankings as RK
 import arbitros_page as ARB
 import teamsHistory as CONF
+import teamHistory as TH
 import PySimpleGUI as sg
 
 #Define as configurações da janela
 sg.theme('DarkGrey14')
-layout = [
-    [sg.Text('futeTUDO - Saiba tudo sobre o mundo da bola', font=('Helvetica', 20), justification='center')],
-    [sg.Text('Escolha uma das opções abaixo:', font=('Helvetica', 16), justification='center')],
-    [sg.Button('Histórico', size=(15, 2)), sg.Button('Confrontos', size=(15, 2)), sg.Button('Árbitros', size=(15, 2)), sg.Button('Rankings', size=(15, 2))],
-    [sg.Text('', size=(40, 10))] # Adiciona um espaço em branco abaixo das opções
+
+layout = [    
+        [sg.Text('futeTUDO - Saiba tudo sobre o mundo da bola', font=('Helvetica', 20), justification='center')],
+        [sg.Text('', font=('Helvetica', 5), justification='center')],
+        [sg.Column([ 
+            [sg.Image('./public/Campeonato_Brasileiro_Série_A_logo1.png',)]
+        ],element_justification='center', vertical_alignment='center'),
+        sg.Column([
+            [sg.Text('Escolha uma das opções abaixo:', font=('Helvetica', 16), justification='center')],
+            [sg.Text('', font=('Helvetica', 5), justification='center')],
+            [sg.Button('Histórico', size=(30, 5))],
+            [sg.Button('Confrontos', size=(30, 5))],
+            [sg.Button('Árbitros', size=(30, 5))],
+            [sg.Button('Rankings', size=(30, 5))]
+        ], element_justification='center', vertical_alignment='center'),
+        sg.Column([
+            [sg.Image('./public/img_times.png')]
+        ], element_justification='center', vertical_alignment='center')
+    ]
 ]
 
+
 # Cria a janela
-window = sg.Window('futeTUDO', layout, size=(800, 600))
+window = sg.Window('futeTUDO', layout, size=(650, 500))
 
 while True:
     # Lê os eventos da janela

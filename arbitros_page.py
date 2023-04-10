@@ -16,11 +16,10 @@ def arbitros():
         [sg.Output(size=(63, 4), key='output')],
         [sg.Text('Média de faltas por jogo:', font=('Helvetica', 14), size=(30,1))],
         [sg.Text('', size=(20, 1), key='-MEDIA_FALTAS-')],
-        [sg.Text('',font=('Helvetica', 14), size=(50,1), key='-TEXT_APROVEITAMENTO-')],
+        [sg.Text('',font=('Helvetica', 14), size=(55,1), key='-TEXT_APROVEITAMENTO-')],
         [sg.Text('', size=(50, 1), key='-APROVEITAMENTO-')],  # Novo elemento para exibir o resultado do aproveitamento
-        [sg.Text('', size=(40, 10))],
         [sg.Text('Partidas:', font=('Helvetica', 14), size=(35,1))],
-        [sg.Listbox(values=[], size=(50, 10), key='-PARTIDAS-')],
+        [sg.Listbox(values=[], size=(80, 20), key='-PARTIDAS-')],
     ]
 
     window = sg.Window('Aproveitamento de Árbitro', layout)
@@ -117,4 +116,5 @@ def arbitros():
                     window.Element('-APROVEITAMENTO-').Update(f"{aproveitamento}%")
                 else:
                     window.Element('-TEXT_APROVEITAMENTO-').Update(f"Sem dados de partidas do {nomeArbitro} com o {nomeTime}")
+                    window.Element('-APROVEITAMENTO-').Update(f"")
                     pontosGanhos = pontosDisputados = noneTypeFaltas = 0
