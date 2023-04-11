@@ -250,4 +250,7 @@ def history():
                 modo = 'C'
             else: 
                 modo = 'D'
+                aux = ano_fim
+                ano_fim = ano_inicio
+                ano_inicio = aux
             MP.make_win2(int(ano_inicio), int(ano_fim), nome_time_1, values['qtde_partidas'],indices_partidas,modo)

@@ -1,7 +1,4 @@
-import sys
+import functions as fun
+import getPartida as utils_partidas
 
-teste = ''
-
-while not teste == "/":
-    teste = sys.stdin.read(1)
-    print(teste)
+fun.printaPartida(utils_partidas.getPartida(7000))

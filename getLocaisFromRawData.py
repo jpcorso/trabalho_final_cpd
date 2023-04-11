@@ -33,11 +33,9 @@ for partida in partidas:
 
 indices = []; ##aqui entraria a árvore e salvaríamos aqui os indices
 with open("./arquivos/locais.bin", "wb") as arquivo:
-    i=0;
     for local in locais:
         indices.append({"indice":arquivo.tell()})
         pickle.dump(local ,arquivo)
-        i+=1
 
 with open("./indices_arquivos/indices_locais.bin", "wb") as arquivo:
     pickle.dump(indices,arquivo)
