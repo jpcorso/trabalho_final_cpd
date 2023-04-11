@@ -4,7 +4,7 @@ import PySimpleGUI as sg
 import functions as utils
 
 def arbitros():
-    sg.theme('DarkGrey14')
+    sg.theme('LightBlue')
 
     layout = [
         [sg.Text('Pesquise um árbitro:', font=('Helvetica', 14), size=(15,1)),
@@ -25,7 +25,6 @@ def arbitros():
     window = sg.Window('Aproveitamento de Árbitro', layout)
 
     arbitros_f = open('./arquivos_invertidos/arbitros_invertidos.bin', 'rb')
-    arbitros = pickle.load(arbitros_f)
 
     numFaltas = noneTypeFaltas = 0
 
@@ -52,6 +51,8 @@ def arbitros():
             arbitros_f.seek(indice_arbitro)
             arbitro_ids = pickle.load(arbitros_f)["ids"]
             partidas = []
+            ids = []
+            partidasDoTime = []
 
             for i in arbitro_ids:
                 partida = fun.getPartida(i)
@@ -60,8 +61,11 @@ def arbitros():
                     numFaltas += partida["faltas_man"] + partida["faltas_vis"]
                 else:
                     noneTypeFaltas += 1
+
                 partidas.append(f"------{partida['data'].strftime('%d/%m/%Y')}------")
                 partidas.append(f'{partida["time_man"]} {partida["gols_man"]} vs {partida["gols_vis"]} {partida["time_vis"]}')
+
+                ids.append(partida["id"])
 
             if len(arbitro_ids) - noneTypeFaltas > 0:
                 mediaFaltas = numFaltas / (len(arbitro_ids) - noneTypeFaltas)
@@ -107,14 +111,32 @@ def arbitros():
                     elif partida["gols_man"] == partida["gols_vis"]:
                         pontosGanhos += 1
 
-                if pontosDisputados != 0:
+            if pontosDisputados != 0:
                     
-                    aproveitamento = (pontosGanhos/pontosDisputados)*100
-                    aproveitamento = round(aproveitamento,2)
+                aproveitamento = (pontosGanhos/pontosDisputados)*100
+                aproveitamento = round(aproveitamento,2)
 
-                    window.Element('-TEXT_APROVEITAMENTO-').Update(f"Aproveitamento do {nomeTime} com o árbitro {nomeArbitro}:")
-                    window.Element('-APROVEITAMENTO-').Update(f"{aproveitamento}%")
-                else:
-                    window.Element('-TEXT_APROVEITAMENTO-').Update(f"Sem dados de partidas do {nomeArbitro} com o {nomeTime}")
-                    window.Element('-APROVEITAMENTO-').Update(f"")
-                    pontosGanhos = pontosDisputados = noneTypeFaltas = 0
+                window.Element('-TEXT_APROVEITAMENTO-').Update(f"Aproveitamento do {nomeTime} com o árbitro {nomeArbitro}:")
+                window.Element('-APROVEITAMENTO-').Update(f"{aproveitamento}%")
+
+            
+                for i in ids:
+                    partida = fun.getPartida(i)
+                    if partida["time_man"] == nomeTime:
+                        partidasDoTime.append(f"------{partida['data'].strftime('%d/%m/%Y')}------")
+                        partidasDoTime.append(f'{partida["time_man"]} {partida["gols_man"]} x {partida["gols_vis"]} {partida["time_vis"]}')
+                    if partida["time_vis"] == nomeTime:
+                        partidasDoTime.append(f"------{partida['data'].strftime('%d/%m/%Y')}------")
+                        partidasDoTime.append(f'{partida["time_man"]} {partida["gols_man"]} x {partida["gols_vis"]} {partida["time_vis"]}')
+                        #if partida["time_man"] == nomeTime or partida["time_vis"] == nomeTime:
+                            #ids.append(f'{partida}')
+                            #print(ids)
+                
+                    window.Element('-PARTIDAS-').Update(values=partidasDoTime)
+                    window['-PARTIDAS-'].set_vscroll_position(0)
+            else:
+                window.Element('-TEXT_APROVEITAMENTO-').Update(f"Sem dados de partidas do {nomeArbitro} com o {nomeTime}")
+                window.Element('-APROVEITAMENTO-').Update(f"")
+                pontosGanhos = pontosDisputados = noneTypeFaltas = 0
+
+                    

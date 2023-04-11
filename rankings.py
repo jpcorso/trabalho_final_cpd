@@ -3,7 +3,7 @@ import getPartida as fun
 import PySimpleGUI as sg
 
 def exibir_rankings():
-    sg.theme('DarkGrey14')
+    sg.theme('LightBlue')
     layout = [
         [sg.Text('Rankings do Brasileirão do período de 2003 até 2020...')],
         [sg.Button('Ranking de público', key='publico')],

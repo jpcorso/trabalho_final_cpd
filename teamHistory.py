@@ -8,7 +8,7 @@ import modalPartidas as MP
 import functions as utils
 
 def history():
-    sg.theme('DarkGrey14')
+    sg.theme('LightBlue')
 
     layout = [
         [sg.Text('Time: '), sg.InputText(key='time', default_text='')],

@@ -7,7 +7,7 @@ import functions as utils
 
 def history():
 
-    sg.theme('DarkGrey14')
+    sg.theme('LightBlue')
 
     layout = [
         [sg.Text('Time 1: '), sg.InputText(key='time_1', default_text='')],

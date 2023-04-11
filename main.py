@@ -5,7 +5,7 @@ import teamHistory as TH
 import PySimpleGUI as sg
 
 #Define as configurações da janela
-sg.theme('DarkGrey14')
+sg.theme('LightBlue')
 
 layout = [    
         [sg.Text('futeTUDO - Saiba tudo sobre o mundo da bola', font=('Helvetica', 20), justification='center')],

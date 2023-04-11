@@ -1,0 +1,2 @@
+pyinstaller --onefile --hidden-import=rankings --hidden-import=teamsHistory -hidden-import=teamHistory --hidden-import=arbitros_page
+-hidden-import=getPartida -hidden-import=modalPartidas -hidden-import=minhaTrie --icon=./public/icone.ico meu_programa.py
