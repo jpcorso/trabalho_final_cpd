@@ -8,10 +8,10 @@ def arbitros():
 
     layout = [
         [sg.Text('Pesquise um árbitro:', font=('Helvetica', 14), size=(15,1)),
-        sg.InputText(key='arbitro', size=(20,1)),
+        sg.InputText(key='arbitro', default_text='', size=(20,1)),
         sg.Button('Pesquisar', size=(10,1))],
         [sg.Text('Nome do time:', font=('Helvetica', 14), size=(15,1)),
-        sg.InputText(key='time', size=(20,1), disabled=True),  # Define o estado inicial como desativado
+        sg.InputText(key='time', default_text='', size=(20,1), disabled=True),  # Define o estado inicial como desativado
         sg.Button('Ver Aproveitamento', size=(15,1), disabled=True)],  # Define o estado inicial como desativado
         [sg.Output(size=(63, 4), key='output')],
         [sg.Text('Média de faltas por jogo:', font=('Helvetica', 14), size=(30,1))],
@@ -87,24 +87,34 @@ def arbitros():
             nomeTime = values['time']
             with open("./indices_arquivos/indices_times_invertidos.bin", "rb") as arquivo:
                 indices_times = pickle.load(arquivo)
-                indice_time = utils.indice_do_item(nomeTime, indices_times)
+                indice_time = utils.indice_do_item(nomeTime.title(), indices_times)
                 if not indice_time:
                     window['output'].set_vscroll_position(0)
                     continue
             
             print("Time encontrado com sucesso!")
-            pontosGanhos = pontosDisputados = 0
+            pontosGanhos = pontosDisputados = 0 
 
-            for i in arbitro_ids:
+            time = None
+            with open("./arquivos_invertidos/times_invertidos.bin", "rb") as times_invertidos:
+                times_invertidos.seek(indice_time)
+                time = pickle.load(times_invertidos)
+
+            nome_time = time["nome"]
+            ids_time = time["ids"]
+
+            indices_partidas = [value for value in ids_time if value in arbitro_ids]; 
+
+            for i in indices_partidas:
                 partida = fun.getPartida(i)
-                if partida["time_vis"] == nomeTime:
+                if partida["time_vis"] == nome_time:
                     pontosDisputados += 3
                     if partida["gols_vis"] > partida["gols_man"]:
                         pontosGanhos += 3
                     elif partida["gols_vis"] == partida["gols_man"]:
                         pontosGanhos += 1
                 
-                if partida["time_man"] == nomeTime:
+                if partida["time_man"] == nome_time:
                     pontosDisputados += 3
                     if partida["gols_man"] > partida["gols_vis"]:
                         pontosGanhos += 3
@@ -116,21 +126,19 @@ def arbitros():
                 aproveitamento = (pontosGanhos/pontosDisputados)*100
                 aproveitamento = round(aproveitamento,2)
 
-                window.Element('-TEXT_APROVEITAMENTO-').Update(f"Aproveitamento do {nomeTime} com o árbitro {nomeArbitro}:")
+                window.Element('-TEXT_APROVEITAMENTO-').Update(f"Aproveitamento do {nome_time} com o árbitro {nomeArbitro}:")
                 window.Element('-APROVEITAMENTO-').Update(f"{aproveitamento}%")
 
+                partidasDoTime = []
             
-                for i in ids:
+                for i in indices_partidas:
                     partida = fun.getPartida(i)
-                    if partida["time_man"] == nomeTime:
+                    if partida["time_man"] == nome_time:
                         partidasDoTime.append(f"------{partida['data'].strftime('%d/%m/%Y')}------")
                         partidasDoTime.append(f'{partida["time_man"]} {partida["gols_man"]} x {partida["gols_vis"]} {partida["time_vis"]}')
-                    if partida["time_vis"] == nomeTime:
+                    if partida["time_vis"] == nome_time:
                         partidasDoTime.append(f"------{partida['data'].strftime('%d/%m/%Y')}------")
                         partidasDoTime.append(f'{partida["time_man"]} {partida["gols_man"]} x {partida["gols_vis"]} {partida["time_vis"]}')
-                        #if partida["time_man"] == nomeTime or partida["time_vis"] == nomeTime:
-                            #ids.append(f'{partida}')
-                            #print(ids)
                 
                     window.Element('-PARTIDAS-').Update(values=partidasDoTime)
                     window['-PARTIDAS-'].set_vscroll_position(0)

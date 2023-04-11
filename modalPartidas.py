@@ -2,7 +2,7 @@ import getPartida as fun
 import PySimpleGUI as sg
 import functions as utils
 def make_win2(ano_inicio, ano_fim, nome_time, qtde_partidas, indices_partidas, modo):
-    sg.theme('DarkGrey14')
+    sg.theme('LightBlue')
     
     layout = [
                 [sg.Text(f"Mostrando {qtde_partidas} partidas de {nome_time} por vez")],

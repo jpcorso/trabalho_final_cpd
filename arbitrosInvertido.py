@@ -1,6 +1,6 @@
 import getPartida as fun
 import pickle
-import trieGPT as trie
+import trieTree as trieTree
 i=1
 tem_partida=True
 arbitros=[]
@@ -33,7 +33,7 @@ while tem_partida:
         print("Fim das partidas.")
         tem_partida = False
 
-arvore_trie = trie.Trie()
+arvore_trie = trieTree.Trie()
 
 with open("./arquivos_invertidos/arbitros_invertidos.bin", "wb") as arquivo:
     for arbitro in arbitros:

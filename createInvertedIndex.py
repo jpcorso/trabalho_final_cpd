@@ -1,6 +1,6 @@
 import getPartida as fun
 import pickle
-import trieGPT as trie
+import trieTree as trie
 i=1
 tem_partida=True
 times=[]

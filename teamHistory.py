@@ -9,7 +9,7 @@ def history():
     sg.theme('LightBlue')
 
     layout = [
-        [sg.Text('Time: '), sg.InputText(key='time', default_text='CSA')],
+        [sg.Text('Time: '), sg.InputText(key='time', default_text='')],
         [sg.Text('Ano Início: '), sg.InputText(key='ano_inicio', default_text='2003')],
         [sg.Text('Ano Fim: '), sg.InputText(key='ano_fim', default_text='2020')],
         [sg.Button('Buscar')],
