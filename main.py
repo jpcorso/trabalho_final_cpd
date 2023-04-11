@@ -8,7 +8,7 @@ import PySimpleGUI as sg
 sg.theme('LightBlue')
 
 layout = [    
-        [sg.Text('futeTUDO - Saiba tudo sobre o mundo da bola', font=('Helvetica', 20), justification='center')],
+        [sg.Text('A.J - Brasileirão  | Saiba tudo sobre o mundo da bola', font=('Helvetica', 20), justification='center')],
         [sg.Text('', font=('Helvetica', 5), justification='center')],
         [sg.Column([ 
             [sg.Image('./public/Campeonato_Brasileiro_Série_A_logo1.png',)]
@@ -29,7 +29,7 @@ layout = [
 
 
 # Cria a janela
-window = sg.Window('futeTUDO', layout, size=(650, 500))
+window = sg.Window('futeTUDO', layout, size=(690, 500))
 
 while True:
     # Lê os eventos da janela

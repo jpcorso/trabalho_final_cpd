@@ -1,6 +1,7 @@
 import getPartida as fun
 import PySimpleGUI as sg
 import functions as utils
+
 def make_win2(ano_inicio, ano_fim, nome_time, qtde_partidas, indices_partidas, modo):
     sg.theme('LightBlue')
     
@@ -15,7 +16,7 @@ def make_win2(ano_inicio, ano_fim, nome_time, qtde_partidas, indices_partidas, m
    
     window = sg.Window('Ver Partidas', layout)
 
-    j = -int(qtde_partidas)+1
+    j = -int(qtde_partidas)
     fim = False
     inicio = False
     while True:
@@ -26,39 +27,38 @@ def make_win2(ano_inicio, ano_fim, nome_time, qtde_partidas, indices_partidas, m
 
         if event == 'next':
             window['output'].update('')
-            if not fim:
-                j+=int(qtde_partidas)-1
-                for i in range(len(qtde_partidas)-1):
-                    if (i+j) < len(indices_partidas)-1:
-                        inicio = False
-                        fim = False
+            if (j + int(qtde_partidas) < len(indices_partidas)):
+                j+=int(qtde_partidas)
+                if modo.upper() == "D":
+                    indices_partidas = sorted(indices_partidas, reverse=True)
+
+                for i in range(int(qtde_partidas)):
+                    if ((i+j) < len(indices_partidas)):
                         partida = fun.getPartida(indices_partidas[i+j])
                         utils.printaPartida(partida)
-                    else:
-                        fim = True
-                        break
-            else:
-                print("Sem mais partidas à frente.")
+                        print("------------------")
+                    else: 
+                        j+=int(qtde_partidas)
+                        print("Sem mais partidar para frente")
+                        break;               
             window.Element('teste').update(j)
             window['output'].set_vscroll_position(0)
 
         if event == 'prev':
             window['output'].update('')
-            if not inicio:
-                j -= int(qtde_partidas) - 1
-                if j >= 0:
-                    for i in range(len(qtde_partidas) - 1):
-                        if (i+j) < len(indices_partidas) - 1:
-                            inicio = False
-                            fim = False
-                            partida = fun.getPartida(indices_partidas[i + j])
-                            utils.printaPartida(partida)
-                        else:
-                            inicio = True
-                            break
-
+            if (j-int(qtde_partidas) >= 0):
+                j-=int(qtde_partidas)
+                if modo.upper() == "D":
+                    indices_partidas = sorted(indices_partidas, reverse=True)
+                for i in range(int(qtde_partidas)):
+                    if ((i+j) < len(indices_partidas)):
+                        partida = fun.getPartida(indices_partidas[i+j])
+                        utils.printaPartida(partida)
+                        print("------------------")
+                    else: 
+                        break;   
             else:
-                print("Sem mais partidas para trás.")
+                print("Sem mais partidar para trás")
                 j = 0
             window.Element('teste').update(j)
             window['output'].set_vscroll_position(0)
